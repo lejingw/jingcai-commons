@@ -71,7 +71,7 @@ public class DES3Util {
 		Cipher encryptCipher = Cipher.getInstance(algorithm);
 		Key key = getKey(keyString);
 		encryptCipher.init(Cipher.ENCRYPT_MODE, key);
-		return toHexString(encrypt(sourceString.getBytes(),keyString.getBytes()));
+		return toHexString(encrypt(sourceString.getBytes(), keyString.getBytes()));
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class DES3Util {
 	 * 3DES解密
 	 * @param sourceByte 需解密的字节数组
 	 * @param keyByte    解密的密钥字节数组
-	 * @return byte      解密后的字节数组
+	 * @return byte[]    解密后的字节数组
 	 * @throws Exception
 	 */
 	public byte[] decrypt(byte[] sourceByte,byte[] keyByte) throws Exception {
@@ -106,10 +106,24 @@ public class DES3Util {
 	 * 3DES解密
 	 * @param sourceString 	需解密的密文字符串
 	 * @param keyString    	解密的密钥
-	 * @return byte      	解密后的字符串
+	 * @return string      	解密后的字符串
 	 */
 	public String decrypt(String sourceString,String keyString) throws Exception {
 		return new String(decrypt(fromHexString(sourceString),keyString.getBytes()));
+	}
+
+	/**
+	 * 3DES解密，根据默认key解密
+	 * @param sourceString 	需解密的字符串
+	 * @return string      	解密后的字符串
+	 */
+	public String decrypt(String sourceString){
+		try {
+			return decrypt(sourceString, DES3_KEY);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 
@@ -139,7 +153,7 @@ public class DES3Util {
 		return new String(toHex(digestByte));
 	}
 
-	private static byte[] fromHex(byte[] sc) {
+	private byte[] fromHex(byte[] sc) {
 		byte[] res = new byte[sc.length / 2];
 		for (int i = 0; i < sc.length; i++) {
 			byte c1 = (byte) (sc[i] - 48 < 17 ? sc[i] - 48 : sc[i] - 55);
@@ -150,32 +164,35 @@ public class DES3Util {
 		return res;
 	}
 
-	public static String encrypt(String password){
-		DES3Util tu = DES3Util.getInstance();
+	/**
+	 * 3DES加密
+	 * @param sourceString  加密前的原字符串
+	 * @return String       加密之后的16进制密文
+	 * @throws Exception
+	 */
+	public String encrypt(String sourceString){
 		try {
-			password = tu.encrypt(password, DES3_KEY);
+			return encrypt(sourceString, DES3_KEY);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return password;
+		return null;
 	}
 
-
-
-	private static byte[] fromHexString(String hex) {
+	private byte[] fromHexString(String hex) {
 		return fromHex(hex.getBytes());
 	}
 
 
-	 public static void main(String[] args) throws Exception {
-         DES3Util pk7 = DES3Util.getInstance();
-         String key = "514345744E41596C4E41496C";
-         String string = "215215ab";
-         String miwenString = pk7.encrypt(string, key);
-         System.out.println("加密之后密文:" + miwenString);
-
-         miwenString = "7F92660D6F0FD200ACC8E8C1E0FE8D72";
-         String mingwenString = pk7.decrypt(miwenString, key);
-         System.out.println("解密之后明文:" + mingwenString);
-	 }
+//	 public static void main(String[] args) throws Exception {
+//         DES3Util pk7 = DES3Util.getInstance();
+//         String key = "514345744E41596C4E41496C";
+//         String string = "215215ab";
+//         String miwenString = pk7.encrypt(string, key);
+//         System.out.println("加密之后密文:" + miwenString);
+//
+//         miwenString = "7F92660D6F0FD200ACC8E8C1E0FE8D72";
+//         String mingwenString = pk7.decrypt(miwenString, key);
+//         System.out.println("解密之后明文:" + mingwenString);
+//	 }
 }
