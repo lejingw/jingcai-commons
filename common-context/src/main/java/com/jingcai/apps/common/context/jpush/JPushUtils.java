@@ -31,10 +31,12 @@ public class JPushUtils {
     protected static final Logger LOG = LoggerFactory.getLogger(JPushUtils.class);
 
     private final String appKey, masterSecret;
+    private final boolean productionFlag;
 
-    public JPushUtils(String appKey, String masterSecret) {
+    public JPushUtils(String appKey, String masterSecret, boolean productionFlag) {
         this.appKey = appKey;
         this.masterSecret = masterSecret;
+        this.productionFlag = productionFlag;
     }
 
 
@@ -100,7 +102,7 @@ public class JPushUtils {
                         .addExtras(contents)
                         .build())
                 .setOptions(Options.newBuilder()
-                        .setApnsProduction(true)
+                        .setApnsProduction(productionFlag)
                         .build())
                 .build();
     }
@@ -127,7 +129,7 @@ public class JPushUtils {
                         .build())
                 .setMessage(Message.content(contents.get("content")))
                 .setOptions(Options.newBuilder()
-                        .setApnsProduction(true)
+                        .setApnsProduction(productionFlag)
                         .build())
                 .build();
     }
