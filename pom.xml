@@ -13,7 +13,7 @@
         <module>common-jdbc</module>
         <module>common-test</module>
         <module>common-context</module>
-        <module>commons-lang</module>
+        <module>common-lang</module>
     </modules>
 
     <repositories>
