@@ -3,7 +3,6 @@ package com.jingcai.apps.common.jdbc.mybatis;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 
@@ -13,8 +12,8 @@ import java.net.URI;
 public class MyBatisSqlSessionFactoryBean extends SqlSessionFactoryBean {
     private static final String SCHEME_JAR = "jar";
     private static final String SCHEME_FILE = "file";
-    private static final String JAR_URL_SEPARATOR = "!" + File.separator;
-    private static final String FILE_URL_SEPARATOR = "classes" + File.separator;
+    private static final String JAR_URL_SEPARATOR = "!/";
+    private static final String FILE_URL_SEPARATOR = "classes/";
 
     public void setTypeAliasesPackageLocations(Resource[] typeAliasesPackageLocations) {
         StringBuffer buffer = new StringBuffer();
@@ -30,13 +29,14 @@ public class MyBatisSqlSessionFactoryBean extends SqlSessionFactoryBean {
                     } else if (SCHEME_FILE.equals(uri.getScheme())) {
                         classPathStr = path.substring(path.indexOf(FILE_URL_SEPARATOR) + FILE_URL_SEPARATOR.length(), path.length());
                     }
-                    if (classPathStr.endsWith(File.separator)) {
+                    classPathStr = classPathStr.replace('/', '.');
+                    if (classPathStr.endsWith(".")) {
                         classPathStr = classPathStr.substring(0, classPathStr.length() - 1);
                     }
                     if (0 != i) {
                         buffer.append(",");
                     }
-                    buffer.append(classPathStr.replace(File.separatorChar, '.'));
+                    buffer.append(classPathStr);
                 }
             }
         } catch (IOException e) {
