@@ -41,12 +41,14 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+
         <!-- DES3 -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-ext-jdk15</artifactId>
             <version>1.46</version>
         </dependency>
+
         <!-- pojo copy -->
         <dependency>
             <groupId>net.sf.dozer</groupId>
