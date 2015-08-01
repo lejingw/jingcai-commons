@@ -16,6 +16,12 @@
         <module>common-lang</module>
     </modules>
 
+    <scm>
+        <connection>scm:git:git@192.168.0.20:java/jingcai-commons.git</connection>
+        <developerConnection>scm:git:git@192.168.0.20:java/jingcai-commons.git</developerConnection>
+        <url>http://192.168.0.20/java/jingcai-commons</url>
+    </scm>
+
     <repositories>
         <repository>
             <id>jingcai_nexus</id>
