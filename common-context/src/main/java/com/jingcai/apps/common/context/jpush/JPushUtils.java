@@ -32,6 +32,7 @@ public class JPushUtils {
 
     private final String appKey, masterSecret;
     private final boolean productionFlag;
+    private boolean showflag = true;
 
     public JPushUtils(String appKey, String masterSecret, boolean productionFlag) {
         this.appKey = appKey;
@@ -42,19 +43,26 @@ public class JPushUtils {
 
     public void sendPush(String alias, String type, Map<String, String> contents, String channel) {
         PushPayload payload = null;
-        if (channel == null || channel.equals("3")) {
-            payload = buildPushObject_all_alias_alert(alias, type, contents);
-            dopush(payload, alias, type, contents);
-
-            payload = buildPushObject_ios_audienceMore_messageWithExtras(alias, type, contents);
-            dopush(payload, alias, type, contents);
-        } else if (channel.equals("1")) {
-            payload = buildPushObject_all_alias_alert(alias, type, contents);
-            dopush(payload, alias, type, contents);
-        } else if (channel.equals("2")) {
-            payload = buildPushObject_ios_audienceMore_messageWithExtras(alias, type, contents);
-            dopush(payload, alias, type, contents);
+        //如果是需要在通知栏显示的发notice
+        if(showflag) {
+            if (channel == null || channel.equals("3")) {
+                payload = buildPushObject_all_alias_alert(alias,type,contents);
+            } else if (channel.equals("1")) {
+                payload = buildPushObject_ios_alias_alert(alias,type,contents);
+            } else if (channel.equals("2")) {
+                payload = buildPushObject_android_alias_alert(alias,type,contents);
+            }
+        }else{
+            //不需要在通知栏现实的发message
+            if (channel == null || channel.equals("3")) {
+                payload = buildPushObject_all_audienceMore_messageWithExtras(alias,type,contents);
+            } else if (channel.equals("1")) {
+                payload = buildPushObject_ios_audienceMore_messageWithExtras(alias,type,contents);
+            } else if (channel.equals("2")) {
+                payload = buildPushObject_android_audienceMore_messageWithExtras(alias,type,contents);
+            }
         }
+        dopush(payload, alias, type, contents);
     }
 
     /**
@@ -84,14 +92,14 @@ public class JPushUtils {
     }
 
     /**
-     * 生成Android推送内容
+     * 生成Android message内容
      *
      * @param alias    别名 服务端送studentid
      * @param type     消息类型    消息中心的消息->message
      * @param contents 消息内容<message表 title、content>
      * @return
      */
-    private PushPayload buildPushObject_ios_audienceMore_messageWithExtras(String alias, String type, Map<String, String> contents) {
+    private PushPayload buildPushObject_android_audienceMore_messageWithExtras(String alias, String type, Map<String, String> contents) {
         return PushPayload.newBuilder()
                 .setPlatform(Platform.android())
                 .setAudience(Audience.newBuilder()
@@ -107,9 +115,107 @@ public class JPushUtils {
                 .build();
     }
 
+    /**
+     * 生成IOS message内容
+     *
+     * @param alias    别名 服务端送studentid
+     * @param type     消息类型    消息中心的消息->message
+     * @param contents 消息内容<message表 title、content>
+     * @return
+     */
+    private PushPayload buildPushObject_ios_audienceMore_messageWithExtras(String alias, String type, Map<String, String> contents) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.ios())
+                .setAudience(Audience.newBuilder()
+                        .addAudienceTarget(AudienceTarget.alias(alias))
+                        .build())
+                .setMessage(Message.newBuilder()
+                        .setMsgContent(type)
+                        .addExtras(contents)
+                        .build())
+                .setOptions(Options.newBuilder()
+                        .setApnsProduction(productionFlag)
+                        .build())
+                .build();
+    }
 
     /**
-     * 生成IOS推送内容
+     * 生成IOS及安卓 message内容
+     *
+     * @param alias    别名 服务端送studentid
+     * @param type     消息类型    消息中心的消息->message
+     * @param contents 消息内容<message表 title、content>
+     * @return
+     */
+    private PushPayload buildPushObject_all_audienceMore_messageWithExtras(String alias, String type, Map<String, String> contents) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.all())
+                .setAudience(Audience.newBuilder()
+                        .addAudienceTarget(AudienceTarget.alias(alias))
+                        .build())
+                .setMessage(Message.newBuilder()
+                        .setMsgContent(type)
+                        .addExtras(contents)
+                        .build())
+                .setOptions(Options.newBuilder()
+                        .setApnsProduction(productionFlag)
+                        .build())
+                .build();
+    }
+
+
+    /**
+     * 生成IOS Notice内容
+     *
+     * @param alias
+     * @param type
+     * @param contents
+     * @return
+     */
+    private PushPayload buildPushObject_ios_alias_alert(String alias, String type, Map<String, String> contents) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.ios())
+                .setAudience(Audience.alias(alias))
+                .setNotification(Notification.newBuilder()
+                        .addPlatformNotification(IosNotification.newBuilder()
+                                .setAlert(contents.get("title"))
+                                .setBadge(0)
+                                .addExtras(contents)
+                                .build())
+                        .build())
+                .setOptions(Options.newBuilder()
+                        .setApnsProduction(productionFlag)
+                        .build())
+                .build();
+    }
+
+    /**
+     * 生成Android Notice内容
+     *
+     * @param alias
+     * @param type
+     * @param contents
+     * @return
+     */
+    private PushPayload buildPushObject_android_alias_alert(String alias, String type, Map<String, String> contents) {
+        return PushPayload.newBuilder()
+                .setPlatform(Platform.android())
+                .setAudience(Audience.alias(alias))
+                .setNotification(Notification.newBuilder()
+                        .addPlatformNotification(IosNotification.newBuilder()
+                                .setAlert(contents.get("title"))
+                                .setBadge(0)
+                                .addExtras(contents)
+                                .build())
+                        .build())
+                .setOptions(Options.newBuilder()
+                        .setApnsProduction(productionFlag)
+                        .build())
+                .build();
+    }
+
+    /**
+     * 生成Android Notice内容
      *
      * @param alias
      * @param type
@@ -118,19 +224,26 @@ public class JPushUtils {
      */
     private PushPayload buildPushObject_all_alias_alert(String alias, String type, Map<String, String> contents) {
         return PushPayload.newBuilder()
-                .setPlatform(Platform.ios())
+                .setPlatform(Platform.android_ios())
                 .setAudience(Audience.alias(alias))
                 .setNotification(Notification.newBuilder()
                         .addPlatformNotification(IosNotification.newBuilder()
                                 .setAlert(contents.get("title"))
                                 .setBadge(0)
-                                .addExtra("msg_content", contents.get("id"))
+                                .addExtras(contents)
                                 .build())
                         .build())
-                .setMessage(Message.content(contents.get("content")))
                 .setOptions(Options.newBuilder()
                         .setApnsProduction(productionFlag)
                         .build())
                 .build();
+    }
+
+    public boolean isShowflag() {
+        return showflag;
+    }
+
+    public void setShowflag(boolean showflag) {
+        this.showflag = showflag;
     }
 }
