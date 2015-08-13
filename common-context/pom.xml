@@ -20,6 +20,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.jingcai.apps</groupId>
+            <artifactId>common-lang</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!--JPush-->
         <dependency>

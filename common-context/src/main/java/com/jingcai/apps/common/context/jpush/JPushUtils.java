@@ -12,6 +12,7 @@ import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.audience.AudienceTarget;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
+import com.jingcai.apps.common.lang.date.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,6 +109,7 @@ public class JPushUtils {
                 .setMessage(Message.newBuilder()
                         .setMsgContent(type)
                         .addExtras(contents)
+                        .addExtra("pushtime", DateUtil.getNow14())
                         .build())
                 .setOptions(Options.newBuilder()
                         .setApnsProduction(productionFlag)
@@ -132,6 +134,7 @@ public class JPushUtils {
                 .setMessage(Message.newBuilder()
                         .setMsgContent(type)
                         .addExtras(contents)
+                        .addExtra("pushtime", DateUtil.getNow14())
                         .build())
                 .setOptions(Options.newBuilder()
                         .setApnsProduction(productionFlag)
@@ -156,6 +159,7 @@ public class JPushUtils {
                 .setMessage(Message.newBuilder()
                         .setMsgContent(type)
                         .addExtras(contents)
+                        .addExtra("pushtime", DateUtil.getNow14())
                         .build())
                 .setOptions(Options.newBuilder()
                         .setApnsProduction(productionFlag)
@@ -181,7 +185,8 @@ public class JPushUtils {
                                 .setAlert(contents.get("title"))
                                 .setBadge(0)
                                 .addExtras(contents)
-                                .addExtra("type",type)
+                                .addExtra("type", type)
+                                .addExtra("pushtime", DateUtil.getNow14())
                                 .build())
                         .build())
                 .setOptions(Options.newBuilder()
@@ -207,7 +212,8 @@ public class JPushUtils {
                                 .setAlert(contents.get("title"))
                                 .setBadge(0)
                                 .addExtras(contents)
-                                .addExtra("type",type)
+                                .addExtra("type", type)
+                                .addExtra("pushtime", DateUtil.getNow14())
                                 .build())
                         .build())
                 .setOptions(Options.newBuilder()
@@ -217,7 +223,7 @@ public class JPushUtils {
     }
 
     /**
-     * 生成Android Notice内容
+     * 生成IOS及Android Notice内容
      *
      * @param alias
      * @param type
@@ -233,6 +239,8 @@ public class JPushUtils {
                                 .setAlert(contents.get("title"))
                                 .setBadge(0)
                                 .addExtras(contents)
+                                .addExtra("type", type)
+                                .addExtra("pushtime", DateUtil.getNow14())
                                 .build())
                         .build())
                 .setOptions(Options.newBuilder()
