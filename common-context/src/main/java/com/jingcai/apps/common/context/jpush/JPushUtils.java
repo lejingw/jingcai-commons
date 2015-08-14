@@ -10,6 +10,7 @@ import cn.jpush.api.push.model.Platform;
 import cn.jpush.api.push.model.PushPayload;
 import cn.jpush.api.push.model.audience.Audience;
 import cn.jpush.api.push.model.audience.AudienceTarget;
+import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import com.jingcai.apps.common.lang.date.DateUtil;
@@ -208,9 +209,8 @@ public class JPushUtils {
                 .setPlatform(Platform.android())
                 .setAudience(Audience.alias(alias))
                 .setNotification(Notification.newBuilder()
-                        .addPlatformNotification(IosNotification.newBuilder()
+                        .addPlatformNotification(AndroidNotification.newBuilder()
                                 .setAlert(contents.get("title"))
-                                .setBadge(0)
                                 .addExtras(contents)
                                 .addExtra("type", type)
                                 .addExtra("pushtime", DateUtil.getNow14())
