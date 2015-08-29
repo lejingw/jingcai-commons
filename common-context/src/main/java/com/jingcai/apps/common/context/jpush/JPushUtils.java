@@ -51,6 +51,7 @@ public class JPushUtils {
      * @param channel   1：IOS 2：安卓 3：安卓及IOS 5：爱学贷
      */
     public void sendPush(String alias, String type, Map<String, String> contents, String channel) {
+        LOG.debug("["+alias+"]["+type+"]["+channel+"]");
         PushPayload payload = null;
         //如果是需要在通知栏显示的发notice
         if(showflag) {
