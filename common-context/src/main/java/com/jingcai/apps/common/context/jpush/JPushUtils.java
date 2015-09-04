@@ -72,7 +72,8 @@ public class JPushUtils {
                 payload = buildPushObject_android_audienceMore_messageWithExtras(alias,type,contents);
             }
         }
-        dopush(payload, alias, type, contents);
+        if(payload!=null)
+            dopush(payload, alias, type, contents);
     }
 
     /**
