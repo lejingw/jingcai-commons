@@ -53,6 +53,8 @@ public class DateUtil {
      * @return
      */
     public static boolean isInInterval(Date begindate,Date endDate,long desInterval,String type){
+        if(begindate==null||endDate==null)
+            return false;
         long inteval = endDate.getTime() - begindate.getTime();
         if(type.equals("1"))
             inteval = Math.abs(inteval);
