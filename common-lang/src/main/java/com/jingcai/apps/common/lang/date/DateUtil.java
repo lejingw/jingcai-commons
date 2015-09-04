@@ -43,4 +43,26 @@ public class DateUtil {
             return null;
         }
     }
+
+    /**
+     * 判断两个时间点的间隔是否在一个时间区间内
+     * @param begindate
+     * @param endDate
+     * @param desInterval
+     * @param type 0：正向区间 1：正负区间
+     * @return
+     */
+    public static boolean isInInterval(Date begindate,Date endDate,long desInterval,String type){
+        long inteval = endDate.getTime() - begindate.getTime();
+        if(type.equals("1"))
+            inteval = Math.abs(inteval);
+        if(inteval<0)
+            return false;
+
+        if(desInterval>inteval)
+            return true;
+        else
+            return false;
+
+    }
 }
