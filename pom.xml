@@ -32,10 +32,6 @@
             </snapshots>
         </repository>
         <repository>
-            <id>jingcai_release</id>
-            <url>http://192.168.0.20:8081/nexus/content/repositories/jingcai_release/</url>
-        </repository>
-        <repository>
             <id>jingcai_nexus</id>
             <name>jingcai nexus repository</name>
             <url>http://192.168.0.20:8081/nexus/content/groups/public/</url>
