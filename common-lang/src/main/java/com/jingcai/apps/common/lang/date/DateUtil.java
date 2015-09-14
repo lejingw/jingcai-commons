@@ -23,6 +23,11 @@ public class DateUtil {
     public static String getNow14() {
         return date14.format(new Date());
     }
+
+    public static String parse20ToDate14(String date20str){
+        return date14.format(parseDate20(date20str));
+    }
+
     public static Date parseDate20(String date20Str){
         try {
             if(date20Str.length()>19){
@@ -67,4 +72,5 @@ public class DateUtil {
             return false;
 
     }
+
 }
