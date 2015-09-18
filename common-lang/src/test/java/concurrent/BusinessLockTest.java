@@ -15,7 +15,7 @@ public class BusinessLockTest {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
 
 
-    @Test
+    //@Test
     public void test1() throws InterruptedException {
         int taskNum = 100;
         CountDownLatch latch = new CountDownLatch(taskNum);
@@ -29,22 +29,6 @@ public class BusinessLockTest {
         }
         latch.await();
     }
-
-    @Test
-    public void test3() throws InterruptedException {
-        Runnable runnable = new Runnable() {
-            public void run() {
-                System.out.println("--------------------clean start");
-            }
-        };
-        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        service.scheduleAtFixedRate(runnable, 2, 2, TimeUnit.SECONDS);
-        CountDownLatch latch = new CountDownLatch(1);
-        latch.await();
-//        Thread.sleep(100*1000);
-    }
-
 
     class Task implements Runnable {
         private final BusinessLock lock;

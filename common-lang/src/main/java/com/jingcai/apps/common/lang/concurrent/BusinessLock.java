@@ -27,7 +27,7 @@ public class BusinessLock implements InitializingBean, DisposableBean {
      * @return true put成功 如果obj已经存在，wait
      * false   put失败，如obj为null
      */
-    public boolean lock(Object obj) {
+    public boolean lock(final Object obj) {
         if (null == obj) return false;
         final ReentrantLock putLock = this.putLock;
         putLock.lock();
@@ -64,14 +64,14 @@ public class BusinessLock implements InitializingBean, DisposableBean {
         };
         service = Executors.newSingleThreadScheduledExecutor();
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
-        service.scheduleAtFixedRate(runnable, 2, 2, TimeUnit.SECONDS);
+        service.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.MINUTES);
         logger.debug("BusinessLock[{}] service started", this);
     }
 
     public void destroy() throws Exception {
-        logger.debug("BusinessLock[{}] service shutdown", this);
         if (null != service && !service.isShutdown()) {
             service.shutdownNow();
         }
+        logger.debug("BusinessLock[{}] service shutdown", this);
     }
 }
