@@ -13,10 +13,6 @@ public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
     private static final SimpleDateFormat formatter10 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat formatter20 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat date14 = new SimpleDateFormat("yyyyMMddHHmmss");
-    private static String[] parsePatterns = {
-            "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM",
-            "yyyy/MM/dd", "yyyy/MM/dd HH:mm:ss", "yyyy/MM/dd HH:mm", "yyyy/MM",
-            "yyyy.MM.dd", "yyyy.MM.dd HH:mm:ss", "yyyy.MM.dd HH:mm", "yyyy.MM"};
 
     public static String getNow10() {
         return formatter10.format(new Date());
@@ -96,11 +92,26 @@ public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
         if (str == null){
             return null;
         }
+        if(str.toString().length()!=8)
+            return null;
         try {
-            return parseDate(str.toString(), parsePatterns);
+            return parseDate(str.toString(), "yyyyMMdd");
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    /**
+     * 获取两个日期之间的天数
+     *
+     * @param before
+     * @param after
+     * @return
+     */
+    public static double getDistanceOfTwoDate(Date before, Date after) {
+        long beforeTime = before.getTime();
+        long afterTime = after.getTime();
+        return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
     }
 
 }
