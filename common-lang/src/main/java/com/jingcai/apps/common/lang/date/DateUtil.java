@@ -1,5 +1,7 @@
 package com.jingcai.apps.common.lang.date;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -7,7 +9,7 @@ import java.util.Date;
 /**
  * Created by lejing on 15/4/16.
  */
-public class DateUtil {
+public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
     private static final SimpleDateFormat formatter10 = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat formatter20 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final SimpleDateFormat date14 = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -71,6 +73,45 @@ public class DateUtil {
         else
             return false;
 
+    }
+
+    /**
+     * 得到日期字符串 默认格式（yyyy-MM-dd） pattern可以为："yyyy-MM-dd" "HH:mm:ss" "E"
+     */
+    public static String formatDate(Date date, Object... pattern) {
+        String formatDate = null;
+        if (pattern != null && pattern.length > 0) {
+            formatDate = DateFormatUtils.format(date, pattern[0].toString());
+        } else {
+            formatDate = DateFormatUtils.format(date, "yyyy-MM-dd");
+        }
+        return formatDate;
+    }
+
+    public static Date parseDate(Object str) {
+        if (str == null){
+            return null;
+        }
+        if(str.toString().length()!=8)
+            return null;
+        try {
+            return parseDate(str.toString(), "yyyyMMdd");
+        } catch (ParseException e) {
+            return null;
+        }
+    }
+
+    /**
+     * 获取两个日期之间的天数
+     *
+     * @param before
+     * @param after
+     * @return
+     */
+    public static double getDistanceOfTwoDate(Date before, Date after) {
+        long beforeTime = before.getTime();
+        long afterTime = after.getTime();
+        return (afterTime - beforeTime) / (1000 * 60 * 60 * 24);
     }
 
 }
