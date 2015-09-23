@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -62,7 +63,13 @@ public class BusinessLock implements InitializingBean, DisposableBean {
                 }
             }
         };
-        service = Executors.newSingleThreadScheduledExecutor();
+        service = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+            public Thread newThread(Runnable r) {
+                Thread thread = new Thread(null, r, "BusinessLock-cleaner");
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
         // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
         service.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.MINUTES);
         logger.debug("BusinessLock[{}] service started", this);
