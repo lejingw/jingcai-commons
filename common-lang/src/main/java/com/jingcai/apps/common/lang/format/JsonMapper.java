@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
+//import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -184,12 +184,12 @@ public class JsonMapper extends ObjectMapper {
     /**
      * 支持使用Jaxb的Annotation，使得POJO上的annotation不用与Jackson耦合。
      * 默认会先查找jaxb的annotation，如果找不到再找jackson的。
-     */
     public JsonMapper enableJaxbAnnotation() {
         JaxbAnnotationModule module = new JaxbAnnotationModule();
         this.registerModule(module);
         return this;
     }
+     */
 
     /**
      * 允许单引号

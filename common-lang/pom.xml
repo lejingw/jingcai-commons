@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>common-lang</artifactId>
+    <version>1.1-RELEASE</version>
 
     <properties>
         <guava.version>18.0</guava.version>
@@ -20,26 +21,34 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
         <!-- util -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jaxb-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- DES3 -->
@@ -47,6 +56,7 @@
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-ext-jdk15</artifactId>
             <version>1.46</version>
+            <optional>true</optional>
         </dependency>
 
         <!-- pojo copy -->
@@ -54,6 +64,7 @@
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
             <version>${dozer.version}</version>
+            <optional>true</optional>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>

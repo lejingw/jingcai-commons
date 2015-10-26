@@ -16,7 +16,7 @@
         <dependency>
             <groupId>com.jingcai.apps</groupId>
             <artifactId>common-lang</artifactId>
-            <version>1.0-RELEASE</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>

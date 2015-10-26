@@ -19,6 +19,7 @@ import java.net.URLEncoder;
  * 2.自制的base62 编码
  * 3.Commons-Lang的xml/html escape
  * 4.JDK提供的URLEncoder
+ *
  * @author calvin
  * @version 2013-01-15
  */
@@ -51,7 +52,7 @@ public class Encodes {
 	public static String encodeBase64(byte[] input) {
 		return new String(Base64.encodeBase64(input));
 	}
-	
+
 	/**
 	 * Base64编码.
 	 */
@@ -76,7 +77,7 @@ public class Encodes {
 	public static byte[] decodeBase64(String input) {
 		return Base64.decodeBase64(input.getBytes());
 	}
-	
+
 	/**
 	 * Base64解码.
 	 */
@@ -128,7 +129,7 @@ public class Encodes {
 	}
 
 	/**
-	 * URL 编码, Encode默认为UTF-8. 
+	 * URL 编码, Encode默认为UTF-8.
 	 */
 	public static String urlEncode(String part) {
 		try {
@@ -139,7 +140,7 @@ public class Encodes {
 	}
 
 	/**
-	 * URL 解码, Encode默认为UTF-8. 
+	 * URL 解码, Encode默认为UTF-8.
 	 */
 	public static String urlDecode(String part) {
 
