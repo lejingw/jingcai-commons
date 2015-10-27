@@ -15,12 +15,12 @@ public class BusinessLockTest {
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
 
 
-    //@Test
+    @Test
     public void test1() throws InterruptedException {
-        int taskNum = 100;
+        int taskNum = 90;
         CountDownLatch latch = new CountDownLatch(taskNum);
-        BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(100);
-        ExecutorService executor = new ThreadPoolExecutor(10, 10, 1L, TimeUnit.SECONDS, queue);
+        BlockingQueue<Runnable> queue = new ArrayBlockingQueue<Runnable>(1000);
+        ExecutorService executor = new ThreadPoolExecutor(9, 9, 1L, TimeUnit.SECONDS, queue);
         Random random = new Random();
         final BusinessLock lock = new BusinessLock();
         for (int i = 0; i < taskNum; i++) {
@@ -28,6 +28,7 @@ public class BusinessLockTest {
             executor.execute(new Task(lock, latch, i, rint));
         }
         latch.await();
+        executor.shutdown();
     }
 
     class Task implements Runnable {
@@ -44,7 +45,7 @@ public class BusinessLockTest {
         }
 
         public void run() {
-            if (!lock.lock(content)) return;
+            lock.lock(content);
             try {
                 Random random = new Random();
                 int rint = random.nextInt(10) + 1;

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>common-all</artifactId>
         <groupId>com.jingcai.apps</groupId>
-        <version>1.0-RELEASE</version>
+        <version>1.1-RELEASE</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -32,6 +32,11 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>3.2.1</version>
+        </dependency>
 
         <dependency>
             <groupId>commons-codec</groupId>
@@ -49,7 +54,12 @@
                     <artifactId>jackson-module-jaxb-annotations</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency><!--
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+            <version>2.3</version>
+        </dependency>-->
 
         <!-- DES3 -->
         <dependency>
@@ -77,6 +87,11 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
         </dependency>
     </dependencies>
 </project>
