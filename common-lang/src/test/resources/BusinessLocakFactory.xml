@@ -20,8 +20,8 @@
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <bean id="businessLockFactory" class="com.jingcai.apps.common.lang.concurrent.BusinessLockFactory"/>
+    <bean id="businessLock" class="com.jingcai.apps.common.lang.concurrent.BusinessLockFactory"/>
 
-    <bean id="lock1" parent="businessLockFactory"/>
-    <bean id="lock2" parent="businessLockFactory"/>
+    <bean id="lock1" parent="businessLock"/>
+    <bean id="lock2" parent="businessLock"/>
 </beans>
