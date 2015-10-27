@@ -15,6 +15,7 @@ public class BusinessLock {
 	private static Logger logger = LoggerFactory.getLogger(BusinessLock.class);
 	private final Map<Object, ReentrantLock> lockMap;
 	private final ThreadLocal<ReentrantLock> threadLocal = new InheritableThreadLocal<ReentrantLock>();
+	private final ThreadLocal<Object> threadLocal2 = new InheritableThreadLocal<Object>();
 
 	public BusinessLock() {
 		lockMap = Collections.synchronizedMap(new LRUMap(100));
@@ -36,14 +37,18 @@ public class BusinessLock {
 			lockMap.put(obj, cond = new ReentrantLock());
 		}
 		cond.lock();
+		logger.debug("lock object[{}]", obj);
 		threadLocal.set(cond);
+		threadLocal2.set(obj);
 	}
 
 	public void unlock() {
 		ReentrantLock cond = threadLocal.get();
 		if (null != cond) {
+			logger.debug("unlock object[{}]", threadLocal2.get());
 			cond.unlock();
 			threadLocal.remove();
+			threadLocal2.remove();
 		}
 	}
 }
