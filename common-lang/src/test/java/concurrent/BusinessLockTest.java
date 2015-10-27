@@ -1,6 +1,7 @@
 package concurrent;
 
 import com.jingcai.apps.common.lang.concurrent.BusinessLock;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,13 @@ public class BusinessLockTest {
     private Logger logger = LoggerFactory.getLogger(BusinessLockTest.class);
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss.SSS");
 
+    @Test
+    public void aaa(){
+        System.out.println("------");
+    }
 
+
+    @Ignore("it coast too many time")
     @Test
     public void test1() throws InterruptedException {
         int taskNum = 90;

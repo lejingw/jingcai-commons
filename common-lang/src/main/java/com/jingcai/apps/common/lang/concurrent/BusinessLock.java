@@ -45,8 +45,8 @@ public class BusinessLock {
 	public void unlock() {
 		ReentrantLock cond = threadLocal.get();
 		if (null != cond) {
-			logger.debug("unlock object[{}]", threadLocal2.get());
 			cond.unlock();
+			logger.debug("unlock object[{}]", threadLocal2.get());
 			threadLocal.remove();
 			threadLocal2.remove();
 		}

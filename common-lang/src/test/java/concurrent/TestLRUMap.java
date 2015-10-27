@@ -1,11 +1,11 @@
 package concurrent;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.junit.Test;
 
 public class TestLRUMap {
-	@SuppressWarnings("deprecation")
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+	@Test
+	public void test1() {
 		LRUMap lruMap = new LRUMap(3);
 		lruMap.put("a1", "1");
 		lruMap.put("a2", "2");
