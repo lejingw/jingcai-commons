@@ -11,7 +11,7 @@ public class DistributedLockGen {
 	private static final Logger logger = LoggerFactory.getLogger(DistributedLock.class);
 	private String address;
 
-	public DistributedLock get(String lockname) throws Exception {
+	public DistributedLock get(String lockname) {
 		if(StringUtils.isEmpty(address) || StringUtils.isEmpty(lockname)){
 			logger.error("!!!init DistributedLock error, address and lockname should be set!!!");
 			throw new DistributedLock.LockException("could not generate DistributedLock");

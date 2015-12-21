@@ -1,21 +1,19 @@
 package concurrent;
 
 import com.jingcai.apps.common.lang.concurrent.DistributedLock;
+import com.jingcai.apps.common.lang.concurrent.DistributedLockGen;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.ExceptionDepthComparator;
-
-import java.util.concurrent.CountDownLatch;
 
 /**
  * ConcurrentTask[] tasks = new ConcurrentTask[5];
  * for(int i=0;i<tasks.length;i++){
- * 		tasks[i] = new ConcurrentTask(){
- * 			public void run() {
- * 				System.out.println("==============");
- * 			}};
+ * tasks[i] = new ConcurrentTask(){
+ * public void run() {
+ * System.out.println("==============");
+ * }};
  * }
  * new ConcurrentTest(tasks);
  */
@@ -25,45 +23,53 @@ public class DistributedLockTest {
 
 	@Ignore
 	@Test
-	public void test2(){
-		new Thread(new Runnable() {
-			public void run() {
-				logger.debug("----------------------b1");
-				//try {Thread.sleep(1000);} catch (InterruptedException e) {}
-
-				final DistributedLock lock = new DistributedLock(ZOOKEEPER_URI, "test2");
-				try{
-					lock.lock();
-					logger.debug("----------------------b getlock");
-					//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
-				}catch (Exception e){
-					logger.error("b", e);
-				}finally {
-					logger.debug("----------------------b releaselock");
-					lock.unlock();
-				}
-			}
-		}).start();
+	public void test() {
+		final DistributedLockGen gen = new DistributedLockGen();
+		gen.setAddress(ZOOKEEPER_URI);
 		new Thread(new Runnable() {
 			public void run() {
 				//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
 				logger.debug("----------------------a1");
 
-				final DistributedLock lock = new DistributedLock(ZOOKEEPER_URI, "test2");
-				try{
+				final DistributedLock lock = gen.get("test2");
+				try {
 					lock.lock();
 					logger.debug("----------------------a getlock");
-					try {Thread.sleep(3000);} catch (InterruptedException e) {}
+					try {
+						Thread.sleep(3000);
+					} catch (InterruptedException e) {
+					}
 					//startSignal.countDown();
-				}catch (Exception e){
+				} catch (Exception e) {
 					logger.error("a", e);
-				}finally {
+				} finally {
 					logger.debug("----------------------a releaselock");
 					lock.unlock();
 				}
 			}
 		}).start();
-		try {Thread.sleep(10000000);} catch (InterruptedException e) {}
+		new Thread(new Runnable() {
+			public void run() {
+				logger.debug("----------------------b1");
+				//try {Thread.sleep(1000);} catch (InterruptedException e) {}
+
+				final DistributedLock lock = gen.get("test2");
+				try {
+					lock.lock();
+					logger.debug("----------------------b getlock");
+					//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
+				} catch (Exception e) {
+					logger.error("b", e);
+				} finally {
+					logger.debug("----------------------b releaselock");
+					lock.unlock();
+				}
+			}
+		}).start();
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+		}
 	}
 
 
