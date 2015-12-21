@@ -154,7 +154,7 @@ public class DistributedLock implements Lock, Watcher {
 		return null;
 	}
 
-	public class LockException extends RuntimeException {
+	public static class LockException extends RuntimeException {
 		private static final long serialVersionUID = 1L;
 
 		public LockException(String e) {

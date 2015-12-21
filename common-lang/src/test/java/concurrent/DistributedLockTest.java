@@ -1,6 +1,7 @@
 package concurrent;
 
 import com.jingcai.apps.common.lang.concurrent.DistributedLock;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +22,34 @@ import java.util.concurrent.CountDownLatch;
 public class DistributedLockTest {
 	private static final Logger logger = LoggerFactory.getLogger(DistributedLockTest.class);
 	public static final String ZOOKEEPER_URI = "192.168.0.11:2181,192.168.0.18:2181,192.168.0.19:2181";
-	private CountDownLatch startSignal = new CountDownLatch(1);//开始阀门
 
+	@Ignore
 	@Test
 	public void test2(){
-		final DistributedLock lock = new DistributedLock(ZOOKEEPER_URI, "test2");
+		new Thread(new Runnable() {
+			public void run() {
+				logger.debug("----------------------b1");
+				//try {Thread.sleep(1000);} catch (InterruptedException e) {}
+
+				final DistributedLock lock = new DistributedLock(ZOOKEEPER_URI, "test2");
+				try{
+					lock.lock();
+					logger.debug("----------------------b getlock");
+					//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
+				}catch (Exception e){
+					logger.error("b", e);
+				}finally {
+					logger.debug("----------------------b releaselock");
+					lock.unlock();
+				}
+			}
+		}).start();
 		new Thread(new Runnable() {
 			public void run() {
 				//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
 				logger.debug("----------------------a1");
 
+				final DistributedLock lock = new DistributedLock(ZOOKEEPER_URI, "test2");
 				try{
 					lock.lock();
 					logger.debug("----------------------a getlock");
@@ -40,23 +59,6 @@ public class DistributedLockTest {
 					logger.error("a", e);
 				}finally {
 					logger.debug("----------------------a releaselock");
-					lock.unlock();
-				}
-			}
-		}).start();
-		new Thread(new Runnable() {
-			public void run() {
-				logger.debug("----------------------b1");
-				try {Thread.sleep(1000);} catch (InterruptedException e) {}
-
-				try{
-					lock.lock();
-					logger.debug("----------------------b getlock");
-					//try {startSignal.await();} catch (InterruptedException e) {e.printStackTrace();}
-				}catch (Exception e){
-					logger.error("b", e);
-				}finally {
-					logger.debug("----------------------b releaselock");
 					lock.unlock();
 				}
 			}
