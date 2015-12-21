@@ -51,7 +51,7 @@ public class DistributedLockTest {
 		new Thread(new Runnable() {
 			public void run() {
 				logger.debug("----------------------b1");
-				//try {Thread.sleep(1000);} catch (InterruptedException e) {}
+				try {Thread.sleep(1000);} catch (InterruptedException e) {}
 
 				final DistributedLock lock = gen.get("test2");
 				try {
