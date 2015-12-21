@@ -35,7 +35,7 @@ public class BusinessLockFactoryTest {
 //		System.out.println(context.getBean("lock1", BusinessLock.class));
 //		System.out.println(context.getBean(BusinessLock.class));
 
-		System.out.println(context.getBean("&businessLockFactory"));
+		System.out.println(context.getBean("&businessLock"));
 		System.out.println("-------------------------");
 		System.out.println(context.getBean("lock1"));
 		System.out.println(context.getBean("lock2"));
