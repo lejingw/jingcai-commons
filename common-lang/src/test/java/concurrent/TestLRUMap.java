@@ -20,6 +20,8 @@ public class TestLRUMap {
 		System.out.println(lruMap.get("a2"));//null
 		System.out.println(lruMap);//{a1=1, a3=3, a4=4}
 		System.out.println(lruMap.get("a1"));
-		System.out.println(lruMap);
+		System.out.println(lruMap);//{a3=3, a4=4, a1=1}
+		lruMap.put("a4", "44");
+		System.out.println(lruMap);//{a3=3, a1=1, a4=44}
 	}
 }
