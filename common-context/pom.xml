@@ -25,6 +25,13 @@
             <artifactId>common-lang</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.8.6</version>
+            <optional>true</optional>
+        </dependency>
+
         <!--JPush-->
         <dependency>
             <groupId>cn.jpush.api</groupId>

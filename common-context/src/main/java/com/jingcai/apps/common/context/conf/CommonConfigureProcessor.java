@@ -49,9 +49,6 @@ import java.util.Map.Entry;
  * propertyName=beanName
  * property-value:注入常量值
  * propertyName=常量
- *
- * @author Zhangkaitao
- * @version 1.0
  */
 @Slf4j
 public class CommonConfigureProcessor implements BeanFactoryPostProcessor {

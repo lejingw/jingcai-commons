@@ -21,12 +21,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Map;
 
 @Slf4j
-public class JPushUtils {
+public class JpushUtil {
     private final String appKey, masterSecret;
     private final boolean productionFlag;
     private boolean showflag = true;
 
-    public JPushUtils(String appKey, String masterSecret, boolean productionFlag) {
+    public JpushUtil(String appKey, String masterSecret, boolean productionFlag) {
         this.appKey = appKey;
         this.masterSecret = masterSecret;
         this.productionFlag = productionFlag;
