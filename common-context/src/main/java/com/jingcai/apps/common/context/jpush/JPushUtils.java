@@ -14,24 +14,14 @@ import cn.jpush.api.push.model.notification.AndroidNotification;
 import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import com.jingcai.apps.common.lang.date.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
-/**
- * Title: com.jingcai.azserver.util
- * Description:
- * Copyright: Copyright (c) 2015
- * Company: iZhuan365
- *
- * @author sanq
- * @version 1.0
- * @date 2015-05-12
- */
+@Slf4j
 public class JPushUtils {
-    protected static final Logger LOG = LoggerFactory.getLogger(JPushUtils.class);
-
     private final String appKey, masterSecret;
     private final boolean productionFlag;
     private boolean showflag = true;
@@ -51,7 +41,7 @@ public class JPushUtils {
      * @param channel   1：IOS 2：安卓 3：安卓及IOS 5：爱学贷
      */
     public void sendPush(String alias, String type, Map<String, String> contents, String channel) {
-        LOG.debug("["+alias+"]["+type+"]["+channel+"]");
+        log.debug("["+alias+"]["+type+"]["+channel+"]");
         PushPayload payload = null;
         //如果是需要在通知栏显示的发notice
         if(showflag) {
@@ -88,17 +78,17 @@ public class JPushUtils {
         JPushClient jpushClient = new JPushClient(masterSecret, appKey, 3);
         try {
             PushResult result = jpushClient.sendPush(pushPayload);
-            LOG.info("Got result - " + result);
+            log.info("Got result - " + result);
 
         } catch (APIConnectionException e) {
-            LOG.error("Connection error. Should retry later. ", e);
+            log.error("Connection error. Should retry later. ", e);
 
         } catch (APIRequestException e) {
-            LOG.error("Error response from JPush server. Should review and fix it. ", e);
-            LOG.info("HTTP Status: " + e.getStatus());
-            LOG.info("Error Code: " + e.getErrorCode());
-            LOG.info("Error Message: " + e.getErrorMessage());
-            LOG.info("Msg ID: " + e.getMsgId());
+            log.error("Error response from JPush server. Should review and fix it. ", e);
+            log.info("HTTP Status: " + e.getStatus());
+            log.info("Error Code: " + e.getErrorCode());
+            log.info("Error Message: " + e.getErrorMessage());
+            log.info("Msg ID: " + e.getMsgId());
         }
     }
 

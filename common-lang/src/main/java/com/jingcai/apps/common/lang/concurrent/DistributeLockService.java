@@ -6,7 +6,6 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by lejing on 16/1/5.
  */
-public class DistributeLockService implements InitializingBean {
+public class DistributeLockService {
 	private static final Logger log = LoggerFactory.getLogger(DistributeLockService.class);
 	private final ThreadLocal<Class> threadLocal = new InheritableThreadLocal<Class>();
 	private Map<Class, DistributeLock> map = new ConcurrentHashMap<Class, DistributeLock>(3);
@@ -44,10 +43,6 @@ public class DistributeLockService implements InitializingBean {
 			idGenentry.unlock();
 			threadLocal.remove();
 		}
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		init();
 	}
 
 	public void init() {

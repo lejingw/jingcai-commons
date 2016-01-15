@@ -3,7 +3,7 @@
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  *******************************************************************************/
-package com.jingcai.apps.common.lang;
+package com.jingcai.apps.common.lang.reflect;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;

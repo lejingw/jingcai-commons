@@ -1,5 +1,6 @@
-package com.jingcai.apps.common.lang;
+package com.jingcai.apps.common.context.conf;
 
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.bridge.IMessageHandler;
 import org.aspectj.weaver.ResolvedType;
 import org.aspectj.weaver.World;
@@ -52,9 +53,8 @@ import java.util.Map.Entry;
  * @author Zhangkaitao
  * @version 1.0
  */
+@Slf4j
 public class CommonConfigureProcessor implements BeanFactoryPostProcessor {
-
-	private Logger log = LoggerFactory.getLogger(CommonConfigureProcessor.class);
 
 	private Map<String, Properties> config = new HashMap<String, Properties>();
 

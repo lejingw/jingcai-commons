@@ -1,12 +1,12 @@
 package com.jingcai.apps.common.lang.id;
 
 import com.jingcai.apps.common.lang.string.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,8 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Created by lejing on 16/1/5.
  */
-public class IdGenerator implements InitializingBean {
-	private static final Logger log = LoggerFactory.getLogger(IdGenerator.class);
+@Slf4j
+public class IdGenerator {
 	private static final String PATH_PATTERN = "%s/idlocks/%s";
 	private Map<Class, IdGenEntry> map = new ConcurrentHashMap<Class, IdGenEntry>(3);
 	private String connectString;
@@ -36,10 +36,6 @@ public class IdGenerator implements InitializingBean {
 	public int nextId(Class cls){
 		IdGenEntry idGenentry = getIdGenentry(cls);
 		return idGenentry.nextId();
-	}
-
-	public void afterPropertiesSet() throws Exception {
-		init();
 	}
 
 	public void init() {

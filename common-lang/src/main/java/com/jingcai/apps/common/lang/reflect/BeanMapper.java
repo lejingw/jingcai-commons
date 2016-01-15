@@ -1,4 +1,4 @@
-package com.jingcai.apps.common.lang;
+package com.jingcai.apps.common.lang.reflect;
 
 import com.google.common.collect.Lists;
 import org.dozer.DozerBeanMapper;

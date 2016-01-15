@@ -1,10 +1,6 @@
-/**
- * Copyright (c) 2005-2011 springside.org.cn
- * 
- * $Id: PropertiesLoader.java 1690 2012-02-22 13:42:00Z calvinxiu $
- */
-package com.jingcai.apps.common.lang.conf;
+package com.jingcai.apps.common.context.conf;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -17,13 +13,12 @@ import java.util.NoSuchElementException;
 import java.util.Properties;
 
 /**
- * Properties文件载入工具类. 可载入多个properties文件, 相同的属性在最后载入的文件中的值将会覆盖之前的值，但以System的Property优先.
- * @author calvin
- * @version 2013-05-15
+ * Properties文件载入工具类. 可载入多个properties文件
+ * 相同的属性在最后载入的文件中的值将会覆盖之前的值
+ * 但以System的Property优先.
  */
+@Slf4j
 public class PropertiesLoader {
-
-	private static Logger logger = LoggerFactory.getLogger(PropertiesLoader.class);
 
 	private static ResourceLoader resourceLoader = new DefaultResourceLoader();
 
@@ -139,7 +134,7 @@ public class PropertiesLoader {
 				is = resource.getInputStream();
 				props.load(is);
 			} catch (IOException ex) {
-				logger.info("Could not load properties from path:" + location + ", " + ex.getMessage());
+				log.info("Could not load properties from path:" + location + ", " + ex.getMessage());
 			} finally {
 				try {
 					if (is != null) {

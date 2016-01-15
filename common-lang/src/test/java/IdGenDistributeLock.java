@@ -1,4 +1,4 @@
-import com.jingcai.apps.common.lang.IdGen;
+import com.jingcai.apps.common.lang.id.UuidGen;
 import com.jingcai.apps.common.lang.id.IdGenerator;
 import com.jingcai.apps.common.lang.id.IdGenEntry;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class IdGenDistributeLock {
 		idGenerator.init();
 		return idGenerator;
 	}
-	private Class[] clsArr = new Class[]{IdGen.class, IdGenEntry.class, IdGenDistributeLock.class};
+	private Class[] clsArr = new Class[]{UuidGen.class, IdGenEntry.class, IdGenDistributeLock.class};
 	public void test() throws Exception {
 		IdGenerator idGenerator = create();
 		Random random = new Random();

@@ -1,11 +1,11 @@
 package com.jingcai.apps.common.lang.concurrent;
 
-import org.springframework.beans.factory.FactoryBean;
+//import org.springframework.beans.factory.FactoryBean;
 
 /**
  * Created by lejing on 15/10/27.
  */
-public class BusinessLockFactory implements FactoryBean<BusinessLock> {
+public class BusinessLockFactory/* implements FactoryBean<BusinessLock>*/ {
 	private int maxSize = -1;
 
 	public BusinessLock getObject() throws Exception {

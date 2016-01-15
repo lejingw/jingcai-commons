@@ -1,6 +1,6 @@
 package concurrent.spring;
 
-import com.jingcai.apps.common.lang.IdGen;
+import com.jingcai.apps.common.lang.id.UuidGen;
 import com.jingcai.apps.common.lang.concurrent.DistributeLockService;
 import org.junit.Test;
 
@@ -17,7 +17,7 @@ public class DistributeLockServiceTest {
 		service.setPrefix(prefix);
 		service.init();
 
-		service.lock(IdGen.class, "1");
+		service.lock(UuidGen.class, "1");
 		try{
 			Thread.sleep(10000);
 			System.out.println("----------------");
