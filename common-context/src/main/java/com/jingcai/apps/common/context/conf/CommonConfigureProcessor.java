@@ -77,6 +77,9 @@ public class CommonConfigureProcessor implements BeanFactoryPostProcessor {
 			String value = (String) entry.getValue();
 
 			switch (SupportedConfig.keyToEnum(key)) {
+				case lazy:
+					applyLzay(bdList, value);
+					break;
 				case scope:
 					applyScope(bdList, value);
 					break;
@@ -124,6 +127,13 @@ public class CommonConfigureProcessor implements BeanFactoryPostProcessor {
 		}
 	}
 
+	private void applyLzay(List<BeanDefinition> bdList, String value) {
+		for (BeanDefinition bd : bdList) {
+			bd.setLazyInit("true".equalsIgnoreCase(value));
+			log.debug("apply scope {} to {}", value, bd.getBeanClassName());
+		}
+	}
+
 	private List<BeanDefinition> findBeanDefinition(String aspectjPattern, ConfigurableListableBeanFactory factory) {
 		List<BeanDefinition> bdList = new ArrayList<BeanDefinition>();
 
@@ -149,6 +159,7 @@ public class CommonConfigureProcessor implements BeanFactoryPostProcessor {
 
 	//支持的操作
 	private enum SupportedConfig {
+		lazy("lazy"),
 		scope("scope"),
 		propertyRef("property-ref"),
 		propertyValue("property-value"),
