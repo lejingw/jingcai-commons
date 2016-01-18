@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2005-2012 springside.org.cn
- */
 package com.jingcai.apps.common.lang.encrypt;
 
 import com.jingcai.apps.common.lang.exception.Exceptions;

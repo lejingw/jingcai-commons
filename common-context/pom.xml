@@ -13,6 +13,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.jingcai.apps</groupId>
+            <artifactId>common-lang</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
@@ -20,11 +25,8 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.jingcai.apps</groupId>
-            <artifactId>common-lang</artifactId>
-        </dependency>
 
+        <!-- CommonConfigureProcessor -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjweaver</artifactId>

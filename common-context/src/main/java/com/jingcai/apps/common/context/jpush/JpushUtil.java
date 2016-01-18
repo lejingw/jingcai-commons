@@ -15,8 +15,6 @@ import cn.jpush.api.push.model.notification.IosNotification;
 import cn.jpush.api.push.model.notification.Notification;
 import com.jingcai.apps.common.lang.date.DateUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 

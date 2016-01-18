@@ -4,7 +4,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * Created by lejing on 15/7/3.

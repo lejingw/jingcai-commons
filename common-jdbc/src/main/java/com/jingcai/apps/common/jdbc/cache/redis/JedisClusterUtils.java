@@ -14,13 +14,13 @@ import java.util.Set;
  */
 @Slf4j
 public class JedisClusterUtils {
-	private JedisCluster jc;
+	private JedisCluster2 jc;
 
 	public JedisClusterUtils(Set<HostAndPort> jedisClusterNodes, int timeout, int maxTotal, int maxIdle) {
 		GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
-		jc = new JedisCluster(jedisClusterNodes, timeout, config);
+		jc = new JedisCluster2(jedisClusterNodes, timeout, config);
 	}
 
 	public void set(String key, String value, int timeInSeconds) {

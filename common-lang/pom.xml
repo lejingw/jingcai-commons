@@ -12,40 +12,47 @@
     <artifactId>common-lang</artifactId>
 
     <properties>
-        <guava.version>18.0</guava.version>
         <commons-codec.version>1.8</commons-codec.version>
-        <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
         <jackson.version>2.3.3</jackson.version>
         <dozer.version>5.4.0</dozer.version>
     </properties>
 
     <dependencies>
-        <!-- util -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <optional>true</optional>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>${guava.version}</version>
         </dependency>
+        <!-- StringUtils Encodes:StringEscapeUtils -->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons-lang3.version}</version>
         </dependency>
-        <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-            <version>3.2.1</version>
-        </dependency><!--
+
+        <!-- util
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
             <version>2.3</version>
-        </dependency>-->
-
+        </dependency> -->
+        <!-- Encodes -->
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
             <version>${commons-codec.version}</version>
+            <optional>true</optional>
+        </dependency>
+        <!-- BusinessLock:LRUMap-->
+        <dependency>
+            <groupId>commons-collections</groupId>
+            <artifactId>commons-collections</artifactId>
+            <version>${commons-collections.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -53,14 +60,7 @@
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
             <optional>true</optional>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.module</groupId>
-                    <artifactId>jackson-module-jaxb-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
         <!-- DES3 -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
@@ -68,7 +68,6 @@
             <version>1.46</version>
             <optional>true</optional>
         </dependency>
-
         <!-- pojo copy -->
         <dependency>
             <groupId>net.sf.dozer</groupId>
@@ -83,6 +82,7 @@
             </exclusions>
         </dependency>
 
+        <!--ClassPoolUtils-->
         <dependency>
             <groupId>javassist</groupId>
             <artifactId>javassist</artifactId>
@@ -90,6 +90,7 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- DistributeLockService-->
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-recipes</artifactId>
@@ -103,20 +104,18 @@
             </exclusions>
         </dependency>
 
+        <!-- KryoUtils -->
         <dependency>
             <groupId>com.esotericsoftware</groupId>
             <artifactId>kryo</artifactId>
-            <scope>provided</scope>
+            <version>3.0.3</version>
+            <optional>true</optional>
         </dependency>
 
+        <!-- test -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <optional>true</optional>
         </dependency>
     </dependencies>
 </project>

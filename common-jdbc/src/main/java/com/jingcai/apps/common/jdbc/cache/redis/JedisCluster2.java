@@ -8,66 +8,66 @@ import redis.clients.jedis.params.set.SetParams;
 import java.util.Collections;
 import java.util.Set;
 
-public class JedisCluster extends BinaryJedisCluster /*implements JedisClusterCommands,
+public class JedisCluster2 extends BinaryJedisCluster /*implements JedisClusterCommands,
         MultiKeyJedisClusterCommands, JedisClusterScriptingCommands*/ {
 
-  public JedisCluster(HostAndPort node) {
+  public JedisCluster2(HostAndPort node) {
     this(Collections.singleton(node), DEFAULT_TIMEOUT);
   }
 
-  public JedisCluster(HostAndPort node, int timeout) {
+  public JedisCluster2(HostAndPort node, int timeout) {
     this(Collections.singleton(node), timeout, DEFAULT_MAX_REDIRECTIONS);
   }
 
-  public JedisCluster(HostAndPort node, int timeout, int maxRedirections) {
+  public JedisCluster2(HostAndPort node, int timeout, int maxRedirections) {
     this(Collections.singleton(node), timeout, maxRedirections, new GenericObjectPoolConfig());
   }
 
-  public JedisCluster(HostAndPort node, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(HostAndPort node, final GenericObjectPoolConfig poolConfig) {
     this(Collections.singleton(node), DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
   }
 
-  public JedisCluster(HostAndPort node, int timeout, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(HostAndPort node, int timeout, final GenericObjectPoolConfig poolConfig) {
     this(Collections.singleton(node), timeout, DEFAULT_MAX_REDIRECTIONS, poolConfig);
   }
 
-  public JedisCluster(HostAndPort node, int timeout, int maxRedirections,
-                      final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(HostAndPort node, int timeout, int maxRedirections,
+                       final GenericObjectPoolConfig poolConfig) {
     this(Collections.singleton(node), timeout, maxRedirections, poolConfig);
   }
 
-  public JedisCluster(HostAndPort node, int connectionTimeout, int soTimeout,
-                      int maxRedirections, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(HostAndPort node, int connectionTimeout, int soTimeout,
+                       int maxRedirections, final GenericObjectPoolConfig poolConfig) {
     super(Collections.singleton(node), connectionTimeout, soTimeout, maxRedirections, poolConfig);
   }
 
-  public JedisCluster(Set<HostAndPort> nodes) {
+  public JedisCluster2(Set<HostAndPort> nodes) {
     this(nodes, DEFAULT_TIMEOUT);
   }
 
-  public JedisCluster(Set<HostAndPort> nodes, int timeout) {
+  public JedisCluster2(Set<HostAndPort> nodes, int timeout) {
     this(nodes, timeout, DEFAULT_MAX_REDIRECTIONS);
   }
 
-  public JedisCluster(Set<HostAndPort> nodes, int timeout, int maxRedirections) {
+  public JedisCluster2(Set<HostAndPort> nodes, int timeout, int maxRedirections) {
     this(nodes, timeout, maxRedirections, new GenericObjectPoolConfig());
   }
 
-  public JedisCluster(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(Set<HostAndPort> nodes, final GenericObjectPoolConfig poolConfig) {
     this(nodes, DEFAULT_TIMEOUT, DEFAULT_MAX_REDIRECTIONS, poolConfig);
   }
 
-  public JedisCluster(Set<HostAndPort> nodes, int timeout, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(Set<HostAndPort> nodes, int timeout, final GenericObjectPoolConfig poolConfig) {
     this(nodes, timeout, DEFAULT_MAX_REDIRECTIONS, poolConfig);
   }
 
-  public JedisCluster(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections,
-                      final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(Set<HostAndPort> jedisClusterNode, int timeout, int maxRedirections,
+                       final GenericObjectPoolConfig poolConfig) {
     super(jedisClusterNode, timeout, maxRedirections, poolConfig);
   }
 
-  public JedisCluster(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout,
-                      int maxRedirections, final GenericObjectPoolConfig poolConfig) {
+  public JedisCluster2(Set<HostAndPort> jedisClusterNode, int connectionTimeout, int soTimeout,
+                       int maxRedirections, final GenericObjectPoolConfig poolConfig) {
     super(jedisClusterNode, connectionTimeout, soTimeout, maxRedirections, poolConfig);
   }
 

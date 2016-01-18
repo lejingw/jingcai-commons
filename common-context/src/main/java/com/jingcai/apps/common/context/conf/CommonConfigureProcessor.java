@@ -6,8 +6,6 @@ import org.aspectj.weaver.ResolvedType;
 import org.aspectj.weaver.World;
 import org.aspectj.weaver.bcel.BcelWorld;
 import org.aspectj.weaver.patterns.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;

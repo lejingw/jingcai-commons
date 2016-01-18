@@ -33,21 +33,25 @@ public class IdGenerator {
 		return idGenEntry;
 	}
 
-	public int nextId(Class cls){
+	public int id(Class cls) {
 		IdGenEntry idGenentry = getIdGenentry(cls);
 		return idGenentry.nextId();
 	}
 
+	public String nextId(Class cls) {
+		return String.valueOf(id(cls));
+	}
+
 	public void init() {
-		if(StringUtils.isEmpty(connectString)){
+		if (StringUtils.isEmpty(connectString)) {
 			log.error("connectString can't be empty");
 			return;
 		}
-		if(StringUtils.isEmpty(prefix)){
+		if (StringUtils.isEmpty(prefix)) {
 			log.error("prefix can't be empty");
 			return;
 		}
-		if(stepLength<=0){
+		if (stepLength <= 0) {
 			log.error("stepLength should be positive");
 			return;
 		}
