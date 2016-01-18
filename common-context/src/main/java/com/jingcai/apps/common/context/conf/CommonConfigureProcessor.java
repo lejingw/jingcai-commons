@@ -137,24 +137,18 @@ public class CommonConfigureProcessor implements BeanFactoryPostProcessor {
 	private List<BeanDefinition> findBeanDefinition(String aspectjPattern, ConfigurableListableBeanFactory factory) {
 		List<BeanDefinition> bdList = new ArrayList<BeanDefinition>();
 
+		AspectJTypeMatcher aspectJTypeMatcher = new AspectJTypeMatcher(aspectjPattern);
 		for (String beanName : factory.getBeanDefinitionNames()) {
 			BeanDefinition bd = factory.getBeanDefinition(beanName);
-
-			if (matches(aspectjPattern, bd.getBeanClassName())) {
+			if (!StringUtils.hasLength(bd.getBeanClassName())) {
+				continue;
+			}
+			if (aspectJTypeMatcher.matches(bd.getBeanClassName())) {
 				bdList.add(bd);
 			}
-
 		}
 
 		return bdList;
-	}
-
-
-	private boolean matches(String aspectjPattern, String beanClassName) {
-		if (!StringUtils.hasLength(beanClassName)) {
-			return false;
-		}
-		return new AspectJTypeMatcher(aspectjPattern).matches(beanClassName);
 	}
 
 	//支持的操作
