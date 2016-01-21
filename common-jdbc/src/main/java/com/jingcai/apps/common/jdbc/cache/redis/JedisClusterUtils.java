@@ -54,7 +54,7 @@ public class JedisClusterUtils {
 	}
 
 	public void set(String key, String value, int timeInSeconds) {
-		key = get(key);
+		key = getKey(key);
 		if (timeInSeconds <= 0) {
 			jc.set(key, value);
 		} else {
@@ -64,7 +64,7 @@ public class JedisClusterUtils {
 
 	public void set(String key, Object object, int timeInSeconds) {
 		if (null == object) return;
-		final byte[] keyBytes = get(key).getBytes();
+		final byte[] keyBytes = getKey(key).getBytes();
 		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
 		if (timeInSeconds <= 0) {
 			jc.set(keyBytes, bytes);
@@ -81,7 +81,7 @@ public class JedisClusterUtils {
 	 */
 	public String get(String key) {
 		try {
-			key = get(key);
+			key = getKey(key);
 			if (jc.exists(key)) {
 				String value = jc.get(key);
 				value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
@@ -95,7 +95,7 @@ public class JedisClusterUtils {
 	}
 
 	public void delete(String key) {
-		key = get(key);
+		key = getKey(key);
 		jc.del(key.getBytes());
 	}
 	/*
@@ -115,7 +115,7 @@ public class JedisClusterUtils {
 	 */
 	public Object getObject(String key) {
 		try {
-			key = get(key);
+			key = getKey(key);
 			byte[] keyBytes = key.getBytes();
 			if (jc.exists(keyBytes)) {
 				byte[] bytes = jc.getBytes(keyBytes);
