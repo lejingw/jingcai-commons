@@ -92,4 +92,19 @@ public class JedisCluster2UtilPerformanceTest {
 
 		return new JedisClusterUtils(jedisClusterNodes, 5000, 10, 2);
 	}
+
+	@Test
+	public void testSplit(){
+		String adds = "aaa,bbb ccc;ddd";
+		String[] split = adds.split("[,\\s;]");
+		for (String s : split) {
+			System.out.println(s);
+		}
+	}
+
+	@Test
+	public void testFormat(){
+		String format = "%s_%s";
+		System.out.println(String.format(format, null, "abcd"));
+	}
 }

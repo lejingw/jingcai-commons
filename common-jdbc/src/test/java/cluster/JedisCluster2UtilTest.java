@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
  * Created by lejing on 16/1/14.
  */
 public class JedisCluster2UtilTest {
-	private JedisClusterUtils util = getJedisClusterUtils();
+	private JedisClusterUtils util = getJedisClusterUtils2();
 	@Test
 	public void test_string() throws InterruptedException {
 		String key1 = "key1";
@@ -105,5 +105,10 @@ public class JedisCluster2UtilTest {
 		}
 
 		return new JedisClusterUtils(jedisClusterNodes, 5000, 10, 2);
+	}
+	private JedisClusterUtils getJedisClusterUtils2() {
+		String addrs = "192.168.0.19:7000,192.168.0.19:7001,192.168.0.19:7002,192.168.0.19:7003,192.168.0.19:7004,192.168.0.19:7006";
+//		String addrs = "192.168.0.11:6379";
+		return new JedisClusterUtils(addrs, 5000, 10, 2);
 	}
 }

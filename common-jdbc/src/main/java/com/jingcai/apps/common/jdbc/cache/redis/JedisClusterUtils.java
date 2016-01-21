@@ -1,12 +1,13 @@
 package com.jingcai.apps.common.jdbc.cache.redis;
 
 import com.jingcai.apps.common.lang.serialize.KryoUtils;
+import com.jingcai.apps.common.lang.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.params.set.SetParams;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -14,16 +15,46 @@ import java.util.Set;
  */
 @Slf4j
 public class JedisClusterUtils {
+	public static final String FORMAT = "%s-%s";
 	private JedisCluster2 jc;
+	private String keyPrefix;
+	;
+
+	public JedisClusterUtils(String addrs, int timeout, int maxTotal, int maxIdle) {
+		this(addrs, timeout, maxTotal, maxIdle, null);
+	}
+
+	public JedisClusterUtils(String addrs, int timeout, int maxTotal, int maxIdle, String keyPrefix) {
+		Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
+		String[] addrArr = addrs.split("[,\\s;]");
+		String[] ipAndPort = null;
+		for (String addr : addrArr) {
+			if (StringUtils.isNotEmpty(addr) && (2 == (ipAndPort = addr.split("[:]")).length)) {
+				jedisClusterNodes.add(new HostAndPort(ipAndPort[0], Integer.parseInt(ipAndPort[1])));
+			}
+		}
+		GenericObjectPoolConfig config = new GenericObjectPoolConfig();
+		config.setMaxTotal(maxTotal);
+		config.setMaxIdle(maxIdle);
+		this.jc = new JedisCluster2(jedisClusterNodes, timeout, config);
+		this.keyPrefix = keyPrefix;
+
+	}
 
 	public JedisClusterUtils(Set<HostAndPort> jedisClusterNodes, int timeout, int maxTotal, int maxIdle) {
+		this(jedisClusterNodes, timeout, maxTotal, maxIdle, null);
+	}
+
+	public JedisClusterUtils(Set<HostAndPort> jedisClusterNodes, int timeout, int maxTotal, int maxIdle, String keyPrefix) {
 		GenericObjectPoolConfig config = new GenericObjectPoolConfig();
 		config.setMaxTotal(maxTotal);
 		config.setMaxIdle(maxIdle);
 		jc = new JedisCluster2(jedisClusterNodes, timeout, config);
+		this.keyPrefix = keyPrefix;
 	}
 
 	public void set(String key, String value, int timeInSeconds) {
+		key = get(key);
 		if (timeInSeconds <= 0) {
 			jc.set(key, value);
 		} else {
@@ -33,7 +64,7 @@ public class JedisClusterUtils {
 
 	public void set(String key, Object object, int timeInSeconds) {
 		if (null == object) return;
-		final byte[] keyBytes = key.getBytes();
+		final byte[] keyBytes = get(key).getBytes();
 		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
 		if (timeInSeconds <= 0) {
 			jc.set(keyBytes, bytes);
@@ -50,6 +81,7 @@ public class JedisClusterUtils {
 	 */
 	public String get(String key) {
 		try {
+			key = get(key);
 			if (jc.exists(key)) {
 				String value = jc.get(key);
 				value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
@@ -63,6 +95,7 @@ public class JedisClusterUtils {
 	}
 
 	public void delete(String key) {
+		key = get(key);
 		jc.del(key.getBytes());
 	}
 	/*
@@ -82,6 +115,7 @@ public class JedisClusterUtils {
 	 */
 	public Object getObject(String key) {
 		try {
+			key = get(key);
 			byte[] keyBytes = key.getBytes();
 			if (jc.exists(keyBytes)) {
 				byte[] bytes = jc.getBytes(keyBytes);
@@ -96,5 +130,12 @@ public class JedisClusterUtils {
 			log.warn("get {} error", key, e);
 		}
 		return null;
+	}
+
+	public String getKey(String key) {
+		if (null == keyPrefix) {
+			return key;
+		}
+		return String.format(FORMAT, keyPrefix, key);
 	}
 }
