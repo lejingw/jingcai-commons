@@ -1,9 +1,7 @@
 package encrypt;
 
-import com.jingcai.apps.common.lang.encrypt.Des3Util2;
+import com.jingcai.apps.common.lang.encrypt.Des3Util;
 import com.jingcai.apps.common.lang.encrypt.Md5;
-import org.assertj.core.api.Assertions;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -51,15 +49,15 @@ public class EncryptTest {
 	public void test3(){
 		String key = "514345744E41596C4E41496C";
 		{
-			String encrypt = Des3Util2.encrypt(key, "111111");
+			String encrypt = Des3Util.encrypt(key, "111111");
 			System.out.println(encrypt);//C3EAB353AA425226
-			System.out.println(Des3Util2.decrypt(key, encrypt));
+			System.out.println(Des3Util.decrypt(key, encrypt));
 		}
 		System.out.println("---------");
 		{
-			String encrypt = Des3Util2.encryptBase64(key, "111111");
+			String encrypt = Des3Util.encryptBase64(key, "111111");
 			System.out.println(encrypt);//w+qzU6pCUiY=\n
-			System.out.println(Des3Util2.decryptBase64(key, encrypt));
+			System.out.println(Des3Util.decryptBase64(key, encrypt));
 		}
 	}
 

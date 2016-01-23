@@ -14,7 +14,7 @@ import java.security.SecureRandom;
 /**
  * Created by lejing on 16/1/23.
  */
-public class Des3Util2 {
+public class Des3Util {
 	private static final String charsetName = "UTF-8";
 	private static final String ALGORITHM = "DES";
 
