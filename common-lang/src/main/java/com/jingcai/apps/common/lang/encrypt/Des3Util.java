@@ -120,35 +120,29 @@ public class Des3Util {
 
 	/**
 	 * 生成密钥
-	 *
-	 * @return
-	 * @throws Exception
 	 */
-	public static String initKey() throws Exception {
+	public static String initKey() {
 		return initKey(null);
 	}
 
 	/**
 	 * 生成密钥
-	 *
 	 * @param seed
-	 * @return
-	 * @throws Exception
 	 */
-	public static String initKey(String seed) throws Exception {
+	public static String initKey(String seed) {
 		SecureRandom secureRandom = null;
-
 		if (seed != null) {
 			secureRandom = new SecureRandom(Base64Util.decrypt(seed));
 		} else {
 			secureRandom = new SecureRandom();
 		}
-
-		KeyGenerator kg = KeyGenerator.getInstance(ALGORITHM);
-		kg.init(secureRandom);
-
-		SecretKey secretKey = kg.generateKey();
-
-		return Base64Util.encrypt(secretKey.getEncoded());
+		try {
+			KeyGenerator kg = KeyGenerator.getInstance(ALGORITHM);
+			kg.init(secureRandom);
+			SecretKey secretKey = kg.generateKey();
+			return Base64Util.encrypt(secretKey.getEncoded());
+		}catch (Exception e){
+			throw Exceptions.unchecked(e);
+		}
 	}
 }
