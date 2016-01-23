@@ -1,6 +1,3 @@
-/**
- * Copyright (c) 2005-2012 springside.org.cn
- */
 package com.jingcai.apps.common.lang.encrypt;
 
 import com.jingcai.apps.common.lang.date.DateUtil;
@@ -18,13 +15,22 @@ import java.util.Date;
 
 /**
  * 支持SHA-1/MD5消息摘要的工具类.
- * 
  * 返回ByteSource，可进一步被编码为Hex, Base64或UrlSafeBase64
  */
 public class Digests {
 
-	private static final String SHA1 = "SHA-1";
-	private static final String MD5 = "MD5";
+	enum Algorithm{
+		SHA1("SHA-1"),
+		MD5("MD5");
+		private String name;
+		Algorithm(String name){
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
 
 	private static SecureRandom random = new SecureRandom();
 
@@ -32,33 +38,33 @@ public class Digests {
 	 * 对输入字符串进行md5散列.
 	 */
 	public static byte[] md5(byte[] input) {
-		return digest(input, MD5, null, 1);
+		return digest(input, Algorithm.MD5, null, 1);
 	}
 	public static byte[] md5(byte[] input, int iterations) {
-		return digest(input, MD5, null, iterations);
+		return digest(input, Algorithm.MD5, null, iterations);
 	}
 	
 	/**
 	 * 对输入字符串进行sha1散列.
 	 */
 	public static byte[] sha1(byte[] input) {
-		return digest(input, SHA1, null, 1);
+		return digest(input, Algorithm.SHA1, null, 1);
 	}
 
 	public static byte[] sha1(byte[] input, byte[] salt) {
-		return digest(input, SHA1, salt, 1);
+		return digest(input, Algorithm.SHA1, salt, 1);
 	}
 
 	public static byte[] sha1(byte[] input, byte[] salt, int iterations) {
-		return digest(input, SHA1, salt, iterations);
+		return digest(input, Algorithm.SHA1, salt, iterations);
 	}
 
 	/**
 	 * 对字符串进行散列, 支持md5与sha1算法.
 	 */
-	private static byte[] digest(byte[] input, String algorithm, byte[] salt, int iterations) {
+	private static byte[] digest(byte[] input, Algorithm algorithm, byte[] salt, int iterations) {
 		try {
-			MessageDigest digest = MessageDigest.getInstance(algorithm);
+			MessageDigest digest = MessageDigest.getInstance(algorithm.getName());
 
 			if (salt != null) {
 				digest.update(salt);
@@ -93,19 +99,19 @@ public class Digests {
 	 * 对文件进行md5散列.
 	 */
 	public static byte[] md5(InputStream input) throws IOException {
-		return digest(input, MD5);
+		return digest(input, Algorithm.MD5);
 	}
 
 	/**
 	 * 对文件进行sha1散列.
 	 */
 	public static byte[] sha1(InputStream input) throws IOException {
-		return digest(input, SHA1);
+		return digest(input, Algorithm.SHA1);
 	}
 
-	private static byte[] digest(InputStream input, String algorithm) throws IOException {
+	private static byte[] digest(InputStream input, Algorithm algorithm) throws IOException {
 		try {
-			MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+			MessageDigest messageDigest = MessageDigest.getInstance(algorithm.getName());
 			int bufferLength = 8 * 1024;
 			byte[] buffer = new byte[bufferLength];
 			int read = input.read(buffer, 0, bufferLength);
@@ -124,8 +130,7 @@ public class Digests {
     public static void main(String args[]){
         String s = Encodes.encodeHex(Digests.sha1("smss050447".getBytes()));
         System.out.println(s);
-        Date date = new Date();
-        date = DateUtil.parseDate10("2015-09-01");
+        Date date = DateUtil.parseDate10("2015-09-01");
         Date date1 = null;
         try {
             date1 = new SimpleDateFormat("yyyyMMdd").parse("20150901");
