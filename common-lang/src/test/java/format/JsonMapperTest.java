@@ -14,42 +14,42 @@ public class JsonMapperTest {
 
     @Test
     public void test_ALWAYS() {
-        //{"obj1":"","list":[]}
         JsonMapper jsonMapper = new JsonMapper(JsonInclude.Include.ALWAYS);
         Obj object = new Obj();
         object.setObj2(new Obj1());
         object.setList(new ArrayList<Obj1>());
         System.out.println("ALWAYS--------------" + jsonMapper.toJson(object));
+        //{"str":"a","str1":"","int0":0,"obj1":"","obj2":{"str":""},"list":[]}
     }
 
     @Test
     public void test_NON_DEFAULT() {
-        //{"list":[]}
         JsonMapper jsonMapper = new JsonMapper(JsonInclude.Include.NON_DEFAULT);
         Obj object = new Obj();
         object.setObj2(new Obj1());
         object.setList(new ArrayList<Obj1>());
         System.out.println("NON_DEFAULT--------------" + jsonMapper.toJson(object));
+        //{"obj2":{},"list":[]}
     }
 
     @Test
     public void test_NON_EMPTY() {
-        //{}
         JsonMapper jsonMapper = new JsonMapper(JsonInclude.Include.NON_EMPTY);
         Obj object = new Obj();
         object.setObj2(new Obj1());
         object.setList(new ArrayList<Obj1>());
         System.out.println("NON_EMPTY--------------" + jsonMapper.toJson(object));
+        //{"str":"a","int0":0,"obj2":{}}
     }
 
     @Test
     public void test_NON_NULL() {
-        //{"list":[]}
         JsonMapper jsonMapper = new JsonMapper(JsonInclude.Include.NON_NULL);
         Obj object = new Obj();
         object.setObj2(new Obj1());
         object.setList(new ArrayList<Obj1>());
         System.out.println("NON_NULL--------------" + jsonMapper.toJson(object));
+        //{"str":"a","int0":0,"obj2":{},"list":[]}
     }
 }
 
