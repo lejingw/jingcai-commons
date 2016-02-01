@@ -1,5 +1,6 @@
 package encrypt;
 
+import com.jingcai.apps.common.lang.encrypt.Base64Util;
 import com.jingcai.apps.common.lang.encrypt.Des3Util;
 import com.jingcai.apps.common.lang.encrypt.Md5;
 import org.junit.Test;
@@ -27,5 +28,12 @@ public class EncryptTest {
 			System.out.println(encrypt);//w+qzU6pCUiY=\n
 			System.out.println(Des3Util.decryptBase64(key, encrypt));
 		}
+	}
+
+	@Test
+	public void testBase64(){
+		String str = "111111";
+		String encrypt = Base64Util.encrypt(str);
+		System.out.println(Base64Util.decrypt(encrypt));
 	}
 }

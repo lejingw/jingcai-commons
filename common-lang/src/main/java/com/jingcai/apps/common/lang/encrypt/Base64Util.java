@@ -2,7 +2,6 @@ package com.jingcai.apps.common.lang.encrypt;
 
 import com.jingcai.apps.common.lang.exception.Exceptions;
 import org.apache.commons.codec.binary.Base64;
-import sun.misc.BASE64Encoder;
 
 import java.io.UnsupportedEncodingException;
 
@@ -14,35 +13,38 @@ public class Base64Util {
 	public static final String UTF_8 = "UTF-8";
 
 	/**
-	 * BASE64解密
-	 *
-	 * @param key
-	 * @return
-	 * @throws Exception
+	 * BASE64加密
 	 */
-	public static byte[] decrypt(String key) {
+	public static String encrypt(String key) {
 		try {
-			return decrypt(key.getBytes(UTF_8));
+			return new String(encrypt(key.getBytes(UTF_8)), UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			throw Exceptions.unchecked(e);
 		}
-	}
-	public static byte[] decrypt(byte[] key) {
-			return Base64.encodeBase64(key);
 	}
 
 	/**
 	 * BASE64加密
-	 *
-	 * @param key
-	 * @return
-	 * @throws Exception
 	 */
-	public static String encrypt(byte[] key) {
+	public static byte[] encrypt(byte[] key) {
+		return Base64.encodeBase64(key);
+	}
+
+	/**
+	 * BASE64解密
+	 */
+	public static String decrypt(String key) {
 		try {
-			return new String(Base64.encodeBase64(key), UTF_8);
+			return new String(decrypt(key.getBytes(UTF_8)), UTF_8);
 		} catch (UnsupportedEncodingException e) {
 			throw Exceptions.unchecked(e);
 		}
+	}
+
+	/**
+	 * BASE64解密
+	 */
+	public static byte[] decrypt(byte[] key) {
+		return Base64.decodeBase64(key);
 	}
 }

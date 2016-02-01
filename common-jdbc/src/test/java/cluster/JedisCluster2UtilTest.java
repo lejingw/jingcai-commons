@@ -89,6 +89,20 @@ public class JedisCluster2UtilTest {
 		assertEquals(val1.getAge(), stu.getAge());
 		Thread.sleep(1000);
 		assertNull(util.get(key1));
+	}
+
+	@Test
+	public void test_hset(){
+		String key = "hkey1";
+		String field = "field1";
+		String val = "abc2";
+		util.hset(key, field, val);
+
+		String val2 = (String) util.hget(key, field);
+		assertEquals(val, val2);
+		util.hdel(key, field);
+		long hlen = util.hlen(key);
+		assertEquals(0, hlen);
 
 	}
 

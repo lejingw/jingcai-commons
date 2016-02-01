@@ -49,7 +49,7 @@ public class Des3Util {
 	 */
 	public static String encryptBase64(String key, String str) {
 		byte[] bytes = encrypt(toByte(key), toByte(str));
-		return Base64Util.encrypt(bytes);
+		return new String(Base64Util.encrypt(bytes));
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class Des3Util {
 	 * @return
 	 */
 	public static String decryptBase64(String key, String str) {
-		byte[] bytes = decrypt(toByte(key), Base64Util.decrypt(str));
+		byte[] bytes = decrypt(toByte(key), Base64Util.decrypt(toByte(str)));
 		return new String(bytes);
 	}
 
@@ -132,7 +132,7 @@ public class Des3Util {
 	public static String initKey(String seed) {
 		SecureRandom secureRandom = null;
 		if (seed != null) {
-			secureRandom = new SecureRandom(Base64Util.decrypt(seed));
+			secureRandom = new SecureRandom(Base64Util.decrypt(toByte(seed)));
 		} else {
 			secureRandom = new SecureRandom();
 		}
@@ -140,7 +140,7 @@ public class Des3Util {
 			KeyGenerator kg = KeyGenerator.getInstance(ALGORITHM);
 			kg.init(secureRandom);
 			SecretKey secretKey = kg.generateKey();
-			return Base64Util.encrypt(secretKey.getEncoded());
+			return new String(Base64Util.encrypt(secretKey.getEncoded()));
 		}catch (Exception e){
 			throw Exceptions.unchecked(e);
 		}

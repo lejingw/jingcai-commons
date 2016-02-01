@@ -45,5 +45,13 @@
             <optional>true</optional>
         </dependency>
 
+
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>3.0.3</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 </project>

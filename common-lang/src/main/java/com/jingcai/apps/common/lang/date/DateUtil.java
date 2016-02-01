@@ -131,6 +131,10 @@ public class DateUtil {
 				|| cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
 	}
 
+	public static Date addMonths(Date date, int amount){
+		if(null == date)	return null;
+		return DateUtils.addMonths(date, amount);
+	}
 	public static Date addDays(Date date, int amount){
 		if(null == date)	return null;
 		return DateUtils.addDays(date, amount);

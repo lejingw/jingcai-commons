@@ -1,5 +1,6 @@
 package com.jingcai.apps.common.jdbc.cache.redis;
 
+import com.google.common.collect.Lists;
 import com.jingcai.apps.common.lang.serialize.KryoUtils;
 import com.jingcai.apps.common.lang.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import redis.clients.jedis.HostAndPort;
 import redis.clients.jedis.params.set.SetParams;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -62,9 +64,21 @@ public class JedisClusterUtils {
 		}
 	}
 
+	public String get(String key) {
+		String value = null;
+		key = getKey(key);
+		if (jc.exists(key)) {
+			value = jc.get(key);
+			value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
+			log.debug("get {} = {}", key, value);
+		}
+		return value;
+	}
+
 	public void set(String key, Object object, int timeInSeconds) {
 		if (null == object) return;
-		final byte[] keyBytes = getKey(key).getBytes();
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
 		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
 		if (timeInSeconds <= 0) {
 			jc.set(keyBytes, bytes);
@@ -73,63 +87,57 @@ public class JedisClusterUtils {
 		}
 	}
 
-	/**
-	 * 获取缓存
-	 *
-	 * @param key 键
-	 * @return 值
-	 */
-	public String get(String key) {
-		try {
-			key = getKey(key);
-			if (jc.exists(key)) {
-				String value = jc.get(key);
-				value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
-				log.debug("get {} = {}", key, value);
-				return value;
-			}
-		} catch (Exception e) {
-			log.warn("get {} error", key, e);
-		}
-		return null;
-	}
-
-	public void delete(String key) {
-		key = getKey(key);
-		jc.del(key.getBytes());
-	}
-	/*
-	public void delete(String... keys){
-		List<byte[]> list = Lists.newArrayListWithCapacity(keys.length);
-		for(String key:keys){
-			list.add(key.getBytes());
-		}
-		jc.del((byte[][]) list.toArray());
-	}*/
-
-	/**
-	 * 获取缓存
-	 *
-	 * @param key 键
-	 * @return 值
-	 */
 	public Object getObject(String key) {
-		try {
-			key = getKey(key);
-			byte[] keyBytes = key.getBytes();
-			if (jc.exists(keyBytes)) {
-				byte[] bytes = jc.getBytes(keyBytes);
-				Object value = null;
-				if (null != bytes && bytes.length > 0) {
-					value = KryoUtils.getKryo().readClassAndObject(bytes);
-				}
-				log.debug("get {} = {}", key, value);
-				return value;
+		key = getKey(key);
+		byte[] keyBytes = key.getBytes();
+		Object value = null;
+		if (jc.exists(keyBytes)) {
+			byte[] bytes = jc.getBytes(keyBytes);
+			if (null != bytes && bytes.length > 0) {
+				value = KryoUtils.getKryo().readClassAndObject(bytes);
 			}
-		} catch (Exception e) {
-			log.warn("get {} error", key, e);
+			log.debug("get {} = {}", key, value);
 		}
-		return null;
+		return value;
+	}
+
+	public void hset(String key, String field, Object object) {
+		if (null == object) return;
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		final byte[] fieldBytes = field.getBytes();
+		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
+		log.debug("set key:{} field:{} = {}", key, field, object);
+		jc.hset(keyBytes, fieldBytes, bytes);
+	}
+
+	public Object hget(String key, String field) {
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		final byte[] fieldBytes = field.getBytes();
+		byte[] bytes = jc.hget(keyBytes, fieldBytes);
+		Object value = null;
+		if (null != bytes && bytes.length > 0) {
+			value = KryoUtils.getKryo().readClassAndObject(bytes);
+		}
+		log.debug("get key:{} field:{} = {}", key, field, value);
+		return value;
+	}
+
+	public void hdel(String key, String field){
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		final byte[] fieldBytes = field.getBytes();
+		jc.hdel(keyBytes, fieldBytes);
+		log.debug("del key:{} field:{}", key, field);
+	}
+
+	public long hlen(String key){
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		Long hlen = jc.hlen(keyBytes);
+		log.debug("length key:{} = {}", key, hlen);
+		return hlen;
 	}
 
 	public String getKey(String key) {
@@ -137,5 +145,19 @@ public class JedisClusterUtils {
 			return key;
 		}
 		return String.format(FORMAT, keyPrefix, key);
+	}
+
+	public void delete(String key) {
+		key = getKey(key);
+		log.debug("del key:{}", key);
+		jc.del(key.getBytes());
+	}
+
+	public void delete(String... keys){
+		List<byte[]> list = Lists.newArrayListWithCapacity(keys.length);
+		for(String key:keys){
+			list.add(getKey(key).getBytes());
+		}
+		jc.del((byte[][]) list.toArray());
 	}
 }
