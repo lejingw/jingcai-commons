@@ -147,6 +147,12 @@ public class JedisClusterUtils {
 		return String.format(FORMAT, keyPrefix, key);
 	}
 
+	public boolean exists(String key){
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		return jc.exists(keyBytes);
+	}
+
 	public void delete(String key) {
 		key = getKey(key);
 		log.debug("del key:{}", key);
