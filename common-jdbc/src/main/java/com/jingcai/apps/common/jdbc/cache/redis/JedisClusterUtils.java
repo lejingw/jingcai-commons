@@ -2,6 +2,7 @@ package com.jingcai.apps.common.jdbc.cache.redis;
 
 import com.google.common.collect.Lists;
 import com.jingcai.apps.common.lang.serialize.KryoUtils;
+import com.jingcai.apps.common.lang.serialize.ObjectUtils;
 import com.jingcai.apps.common.lang.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
@@ -20,13 +21,17 @@ public class JedisClusterUtils {
 	public static final String FORMAT = "%s-%s";
 	private JedisCluster2 jc;
 	private String keyPrefix;
-	;
+	private boolean useKyro;
 
 	public JedisClusterUtils(String addrs, int timeout, int maxTotal, int maxIdle) {
 		this(addrs, timeout, maxTotal, maxIdle, null);
 	}
 
 	public JedisClusterUtils(String addrs, int timeout, int maxTotal, int maxIdle, String keyPrefix) {
+		this(addrs, timeout, maxTotal, maxIdle, keyPrefix, false);
+	}
+
+	public JedisClusterUtils(String addrs, int timeout, int maxTotal, int maxIdle, String keyPrefix, boolean useKyro) {
 		Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
 		String[] addrArr = addrs.split("[,\\s;]");
 		String[] ipAndPort = null;
@@ -40,7 +45,7 @@ public class JedisClusterUtils {
 		config.setMaxIdle(maxIdle);
 		this.jc = new JedisCluster2(jedisClusterNodes, timeout, config);
 		this.keyPrefix = keyPrefix;
-
+		this.useKyro = useKyro;
 	}
 
 	public JedisClusterUtils(Set<HostAndPort> jedisClusterNodes, int timeout, int maxTotal, int maxIdle) {
@@ -79,7 +84,7 @@ public class JedisClusterUtils {
 		if (null == object) return;
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
-		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
+		byte[] bytes = getBytes(object);
 		if (timeInSeconds <= 0) {
 			jc.set(keyBytes, bytes);
 		} else {
@@ -94,7 +99,7 @@ public class JedisClusterUtils {
 		if (jc.exists(keyBytes)) {
 			byte[] bytes = jc.getBytes(keyBytes);
 			if (null != bytes && bytes.length > 0) {
-				value = KryoUtils.getKryo().readClassAndObject(bytes);
+				value = getObject(bytes);
 			}
 			log.debug("get {} = {}", key, value);
 		}
@@ -106,7 +111,7 @@ public class JedisClusterUtils {
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		final byte[] fieldBytes = field.getBytes();
-		byte[] bytes = KryoUtils.getKryo().writeClassAndObject(object);
+		byte[] bytes = getBytes(object);
 		log.debug("set key:{} field:{} = {}", key, field, object);
 		jc.hset(keyBytes, fieldBytes, bytes);
 	}
@@ -124,7 +129,7 @@ public class JedisClusterUtils {
 		return value;
 	}
 
-	public void hdel(String key, String field){
+	public void hdel(String key, String field) {
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		final byte[] fieldBytes = field.getBytes();
@@ -132,7 +137,7 @@ public class JedisClusterUtils {
 		log.debug("del key:{} field:{}", key, field);
 	}
 
-	public long hlen(String key){
+	public long hlen(String key) {
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		Long hlen = jc.hlen(keyBytes);
@@ -147,7 +152,7 @@ public class JedisClusterUtils {
 		return String.format(FORMAT, keyPrefix, key);
 	}
 
-	public boolean exists(String key){
+	public boolean exists(String key) {
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		return jc.exists(keyBytes);
@@ -159,11 +164,27 @@ public class JedisClusterUtils {
 		jc.del(key.getBytes());
 	}
 
-	public void delete(String... keys){
+	public void delete(String... keys) {
 		List<byte[]> list = Lists.newArrayListWithCapacity(keys.length);
-		for(String key:keys){
+		for (String key : keys) {
 			list.add(getKey(key).getBytes());
 		}
 		jc.del((byte[][]) list.toArray());
+	}
+
+	private byte[] getBytes(Object object) {
+		if (useKyro) {
+			return KryoUtils.getKryo().writeClassAndObject(object);
+		} else {
+			return ObjectUtils.serialize(object);
+		}
+	}
+
+	private Object getObject(byte[] bytes) {
+		if (useKyro) {
+			return KryoUtils.getKryo().readClassAndObject(bytes);
+		} else {
+			return ObjectUtils.unserialize(bytes);
+		}
 	}
 }
