@@ -17,7 +17,7 @@ import java.util.Set;
  * Created by lejing on 16/1/14.
  */
 @Slf4j
-public class JedisClusterUtils {
+public class JedisClusterUtils implements JedisClient{
 	public static final String FORMAT = "%s-%s";
 	private JedisCluster2 jc;
 	private String keyPrefix;
@@ -60,13 +60,15 @@ public class JedisClusterUtils {
 		this.keyPrefix = keyPrefix;
 	}
 
-	public void set(String key, String value, int timeInSeconds) {
+	public String set(String key, String value, int timeInSeconds) {
+		String result = null;
 		key = getKey(key);
 		if (timeInSeconds <= 0) {
-			jc.set(key, value);
+			result = jc.set(key, value);
 		} else {
-			jc.set(key, value, SetParams.setParams().ex(timeInSeconds));
+			result = jc.set(key, value, SetParams.setParams().ex(timeInSeconds));
 		}
+		return result;
 	}
 
 	public String get(String key) {
@@ -80,16 +82,18 @@ public class JedisClusterUtils {
 		return value;
 	}
 
-	public void set(String key, Object object, int timeInSeconds) {
-		if (null == object) return;
+	public String set(String key, Object object, int timeInSeconds) {
+		if (null == object) return null;
+		String result = null;
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		byte[] bytes = getBytes(object);
 		if (timeInSeconds <= 0) {
-			jc.set(keyBytes, bytes);
+			result = jc.set(keyBytes, bytes);
 		} else {
-			jc.set(keyBytes, bytes, SetParams.setParams().ex(timeInSeconds));
+			result = jc.set(keyBytes, bytes, SetParams.setParams().ex(timeInSeconds));
 		}
+		return result;
 	}
 
 	public Object getObject(String key) {
@@ -112,7 +116,7 @@ public class JedisClusterUtils {
 		final byte[] keyBytes = key.getBytes();
 		final byte[] fieldBytes = field.getBytes();
 		byte[] bytes = getBytes(object);
-		log.debug("set key:{} field:{} = {}", key, field, object);
+		log.debug("hset key:{} field:{} = {}", key, field, object);
 		jc.hset(keyBytes, fieldBytes, bytes);
 	}
 
@@ -123,10 +127,22 @@ public class JedisClusterUtils {
 		byte[] bytes = jc.hget(keyBytes, fieldBytes);
 		Object value = null;
 		if (null != bytes && bytes.length > 0) {
-			value = KryoUtils.getKryo().readClassAndObject(bytes);
+			value = getObject(bytes);
 		}
-		log.debug("get key:{} field:{} = {}", key, field, value);
+		log.debug("hget key:{} field:{} = {}", key, field, value);
 		return value;
+	}
+
+	public Set<String> hkeys(String key) {
+		Set<String> keys = new HashSet<String>();
+		key = getKey(key);
+		final byte[] keyBytes = key.getBytes();
+		Set<byte[]> hkeys = jc.hkeys(keyBytes);
+		for (byte[] hkey : hkeys) {
+			keys.add(new String(hkey));
+		}
+		log.debug("hkeys key:{} = {}", key, keys);
+		return keys;
 	}
 
 	public void hdel(String key, String field) {
@@ -134,14 +150,14 @@ public class JedisClusterUtils {
 		final byte[] keyBytes = key.getBytes();
 		final byte[] fieldBytes = field.getBytes();
 		jc.hdel(keyBytes, fieldBytes);
-		log.debug("del key:{} field:{}", key, field);
+		log.debug("hdel key:{} field:{}", key, field);
 	}
 
 	public long hlen(String key) {
 		key = getKey(key);
 		final byte[] keyBytes = key.getBytes();
 		Long hlen = jc.hlen(keyBytes);
-		log.debug("length key:{} = {}", key, hlen);
+		log.debug("hlen key:{} = {}", key, hlen);
 		return hlen;
 	}
 

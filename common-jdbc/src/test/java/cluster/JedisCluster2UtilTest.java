@@ -17,7 +17,7 @@ public class JedisCluster2UtilTest {
 	private JedisClusterUtils util = getJedisClusterUtils2();
 	@Test
 	public void test_string() throws InterruptedException {
-		String key1 = "key1";
+		String key1 = "key11";
 
 		assertNull(util.get(key1));
 
@@ -121,8 +121,10 @@ public class JedisCluster2UtilTest {
 		return new JedisClusterUtils(jedisClusterNodes, 5000, 10, 2);
 	}
 	private JedisClusterUtils getJedisClusterUtils2() {
-		String addrs = "192.168.0.19:7000,192.168.0.19:7001,192.168.0.19:7002,192.168.0.19:7003,192.168.0.19:7004,192.168.0.19:7006";
+//		String addrs = "192.168.0.19:7000,192.168.0.19:7001,192.168.0.19:7002,192.168.0.19:7003,192.168.0.19:7004,192.168.0.19:7006";
 //		String addrs = "192.168.0.11:6379";
+		String addrs = "101.200.159.181:6380,101.200.159.181:6381,101.200.159.228:6380,101.200.159.228:6381,101.200.186.179:6380,101.200.186.179:6381";
+//		String addrs = "101.200.159.181:6380,101.200.159.228:6380,101.200.186.179:6380";
 		return new JedisClusterUtils(addrs, 5000, 10, 2);
 	}
 }

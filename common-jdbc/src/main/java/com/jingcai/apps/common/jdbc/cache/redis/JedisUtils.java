@@ -11,6 +11,7 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.exceptions.JedisException;
 
 import java.nio.charset.Charset;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -19,17 +20,26 @@ import java.util.Set;
  * Jedis Cache 工具类
  */
 @Slf4j
-public class JedisUtils {
+public class JedisUtils implements JedisClient {
+	public static final String FORMAT = "%s-%s";
 	private JedisPool jedisPool;
 	public String keyPrefix;
 
-	public JedisUtils(JedisPool jedisPool, String keyPrefix){
+	public JedisUtils(JedisPool jedisPool, String keyPrefix) {
 		this.jedisPool = jedisPool;
 		this.keyPrefix = keyPrefix;
 	}
 
+	public String getKey(String key) {
+		if (null == keyPrefix) {
+			return key;
+		}
+		return String.format(FORMAT, keyPrefix, key);
+	}
+
 	/**
 	 * 获取缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -50,9 +60,10 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -72,11 +83,12 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 设置缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -97,15 +109,16 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 设置缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
-	public String setObject(String key, Object value, int cacheSeconds) {
+	public String set(String key, Object value, int cacheSeconds) {
 		String result = null;
 		Jedis jedis = null;
 		try {
@@ -122,9 +135,122 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
+	public void hset(String key, String field, Object value) {
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			jedis.hset(getBytesKey(key), toBytes(field), toBytes(value));
+			log.debug("hset key:{} field:{} = {}", key, field, value);
+		} catch (Exception e) {
+			log.warn("hset key:{} field:{} = {}", key, field, e);
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+	public Object hget(String key, String field) {
+		Object value = null;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			byte[] bytes = jedis.hget(getBytesKey(key), toBytes(field));
+			value = toObject(bytes);
+			log.debug("hget key:{} field:{} = {}", key, field, value);
+		} catch (Exception e) {
+			log.warn("hget key:{} field:{} = {}", key, field, e);
+		} finally {
+			returnResource(jedis);
+		}
+		return value;
+	}
+
+	public Set<String> hkeys(String key) {
+		Set<String> keys = new HashSet<String>();
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			keys = jedis.hkeys(getKey(key));
+			log.debug("hkeys key:{} = {}", key, keys);
+		} catch (Exception e) {
+			log.warn("hkeys key:{} {} = {}", key, e);
+		} finally {
+			returnResource(jedis);
+		}
+		return keys;
+	}
+
+	public void hdel(String key, String field) {
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			key = getKey(key);
+			jedis.hdel(key, field);
+			log.debug("hdel key:{} field:{}", key, field);
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+	public long hlen(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			key = getKey(key);
+			Long hlen = jedis.hlen(key);
+			log.debug("hlen key:{} = {}", key, hlen);
+			return hlen;
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+	public boolean exists(String key) {
+		boolean result = false;
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			key = getKey(key);
+			result = jedis.exists(key);
+			log.debug("exists {} {}", key, result);
+		} catch (Exception e) {
+			log.warn("exists {}", key, e);
+		} finally {
+			returnResource(jedis);
+		}
+		return result;
+	}
+
+	public void delete(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			key = getKey(key);
+			log.debug("del key:{}", key);
+			jedis.del(key);
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+	public void delete(String... keys) {
+		List<String> list = Lists.newArrayListWithCapacity(keys.length);
+		for (String key : keys) {
+			list.add(getKey(key));
+		}
+		Jedis jedis = null;
+		try {
+			jedis = getResource();
+			jedis.del(list.toArray(new String[0]));
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+
 	/**
 	 * 获取List缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -144,9 +270,10 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取List缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -158,7 +285,7 @@ public class JedisUtils {
 			if (jedis.exists(getBytesKey(key))) {
 				List<byte[]> list = jedis.lrange(getBytesKey(key), 0, -1);
 				value = Lists.newArrayList();
-				for (byte[] bs : list){
+				for (byte[] bs : list) {
 					value.add(toObject(bs));
 				}
 				log.debug("getObjectList {} = {}", key, value);
@@ -170,11 +297,12 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 设置List缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -186,7 +314,7 @@ public class JedisUtils {
 			if (jedis.exists(key)) {
 				jedis.del(key);
 			}
-			result = jedis.rpush(key, (String[])value.toArray());
+			result = jedis.rpush(key, (String[]) value.toArray());
 			if (cacheSeconds != 0) {
 				jedis.expire(key, cacheSeconds);
 			}
@@ -198,11 +326,12 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 设置List缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -221,7 +350,7 @@ public class JedisUtils {
 //			result = jedis.rpush(getBytesKey(key), (byte[][])list.toArray());
 
 			byte[][] arr = new byte[value.size()][];
-			for(int i=0;i<value.size();i++){
+			for (int i = 0; i < value.size(); i++) {
 				arr[i] = toBytes(value.get(i));
 			}
 			result = jedis.rpush(getBytesKey(key), arr);
@@ -236,10 +365,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 向List缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -257,10 +387,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 向List缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -270,10 +401,10 @@ public class JedisUtils {
 		try {
 			jedis = getResource();
 			List<byte[]> list = Lists.newArrayList();
-			for (Object o : value){
+			for (Object o : value) {
 				list.add(toBytes(o));
 			}
-			result = jedis.rpush(getBytesKey(key), (byte[][])list.toArray());
+			result = jedis.rpush(getBytesKey(key), (byte[][]) list.toArray());
 			log.debug("listObjectAdd {} = {}", key, value);
 		} catch (Exception e) {
 			log.warn("listObjectAdd {} = {}", key, value, e);
@@ -285,6 +416,7 @@ public class JedisUtils {
 
 	/**
 	 * 获取缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -304,9 +436,10 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -318,7 +451,7 @@ public class JedisUtils {
 			if (jedis.exists(getBytesKey(key))) {
 				value = Sets.newHashSet();
 				Set<byte[]> set = jedis.smembers(getBytesKey(key));
-				for (byte[] bs : set){
+				for (byte[] bs : set) {
 					value.add(toObject(bs));
 				}
 				log.debug("getObjectSet {} = {}", key, value);
@@ -330,11 +463,12 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 设置Set缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -346,7 +480,7 @@ public class JedisUtils {
 			if (jedis.exists(key)) {
 				jedis.del(key);
 			}
-			result = jedis.sadd(key, (String[])value.toArray());
+			result = jedis.sadd(key, (String[]) value.toArray());
 			if (cacheSeconds != 0) {
 				jedis.expire(key, cacheSeconds);
 			}
@@ -358,11 +492,12 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 设置Set缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -375,10 +510,10 @@ public class JedisUtils {
 				jedis.del(key);
 			}
 			Set<byte[]> set = Sets.newHashSet();
-			for (Object o : value){
+			for (Object o : value) {
 				set.add(toBytes(o));
 			}
-			result = jedis.sadd(getBytesKey(key), (byte[][])set.toArray());
+			result = jedis.sadd(getBytesKey(key), (byte[][]) set.toArray());
 			if (cacheSeconds != 0) {
 				jedis.expire(key, cacheSeconds);
 			}
@@ -390,10 +525,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 向Set缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -414,7 +550,8 @@ public class JedisUtils {
 
 	/**
 	 * 向Set缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -424,10 +561,10 @@ public class JedisUtils {
 		try {
 			jedis = getResource();
 			Set<byte[]> set = Sets.newHashSet();
-			for (Object o : value){
+			for (Object o : value) {
 				set.add(toBytes(o));
 			}
-			result = jedis.rpush(getBytesKey(key), (byte[][])set.toArray());
+			result = jedis.rpush(getBytesKey(key), (byte[][]) set.toArray());
 			log.debug("setSetObjectAdd {} = {}", key, value);
 		} catch (Exception e) {
 			log.warn("setSetObjectAdd {} = {}", key, value, e);
@@ -436,9 +573,10 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 获取Map缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -458,9 +596,10 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 获取Map缓存
+	 *
 	 * @param key 键
 	 * @return 值
 	 */
@@ -472,7 +611,7 @@ public class JedisUtils {
 			if (jedis.exists(getBytesKey(key))) {
 				value = Maps.newHashMap();
 				Map<byte[], byte[]> map = jedis.hgetAll(getBytesKey(key));
-				for (Map.Entry<byte[], byte[]> e : map.entrySet()){
+				for (Map.Entry<byte[], byte[]> e : map.entrySet()) {
 					value.put(StringUtils.toEncodedString(e.getKey(), Charset.defaultCharset()), toObject(e.getValue()));
 				}
 				log.debug("getObjectMap {} = {}", key, value);
@@ -484,11 +623,12 @@ public class JedisUtils {
 		}
 		return value;
 	}
-	
+
 	/**
 	 * 设置Map缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -512,11 +652,12 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 设置Map缓存
-	 * @param key 键
-	 * @param value 值
+	 *
+	 * @param key          键
+	 * @param value        值
 	 * @param cacheSeconds 超时时间，0为不超时
 	 * @return
 	 */
@@ -529,10 +670,10 @@ public class JedisUtils {
 				jedis.del(key);
 			}
 			Map<byte[], byte[]> map = Maps.newHashMap();
-			for (Map.Entry<String, Object> e : value.entrySet()){
+			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			result = jedis.hmset(getBytesKey(key), (Map<byte[], byte[]>)map);
+			result = jedis.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
 			if (cacheSeconds != 0) {
 				jedis.expire(key, cacheSeconds);
 			}
@@ -544,10 +685,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 向Map缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -565,10 +707,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 向Map缓存中添加值
-	 * @param key 键
+	 *
+	 * @param key   键
 	 * @param value 值
 	 * @return
 	 */
@@ -578,10 +721,10 @@ public class JedisUtils {
 		try {
 			jedis = getResource();
 			Map<byte[], byte[]> map = Maps.newHashMap();
-			for (Map.Entry<String, Object> e : value.entrySet()){
+			for (Map.Entry<String, Object> e : value.entrySet()) {
 				map.put(getBytesKey(e.getKey()), toBytes(e.getValue()));
 			}
-			result = jedis.hmset(getBytesKey(key), (Map<byte[], byte[]>)map);
+			result = jedis.hmset(getBytesKey(key), (Map<byte[], byte[]>) map);
 			log.debug("mapObjectPut {} = {}", key, value);
 		} catch (Exception e) {
 			log.warn("mapObjectPut {} = {}", key, value, e);
@@ -590,10 +733,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 移除Map缓存中的值
-	 * @param key 键
+	 *
+	 * @param key    键
 	 * @param mapKey 值
 	 * @return
 	 */
@@ -611,10 +755,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 移除Map缓存中的值
-	 * @param key 键
+	 *
+	 * @param key    键
 	 * @param mapKey 值
 	 * @return
 	 */
@@ -632,10 +777,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 判断Map缓存中的Key是否存在
-	 * @param key 键
+	 *
+	 * @param key    键
 	 * @param mapKey 值
 	 * @return
 	 */
@@ -653,10 +799,11 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 判断Map缓存中的Key是否存在
-	 * @param key 键
+	 *
+	 * @param key    键
 	 * @param mapKey 值
 	 * @return
 	 */
@@ -674,9 +821,10 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 删除缓存
+	 *
 	 * @param key 键
 	 * @return
 	 */
@@ -685,10 +833,10 @@ public class JedisUtils {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
-			if (jedis.exists(key)){
+			if (jedis.exists(key)) {
 				result = jedis.del(key);
 				log.debug("del {}", key);
-			}else{
+			} else {
 				log.debug("del {} not exists", key);
 			}
 		} catch (Exception e) {
@@ -701,6 +849,7 @@ public class JedisUtils {
 
 	/**
 	 * 删除缓存
+	 *
 	 * @param key 键
 	 * @return
 	 */
@@ -709,10 +858,10 @@ public class JedisUtils {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
-			if (jedis.exists(getBytesKey(key))){
+			if (jedis.exists(getBytesKey(key))) {
 				result = jedis.del(getBytesKey(key));
 				log.debug("delObject {}", key);
-			}else{
+			} else {
 				log.debug("delObject {} not exists", key);
 			}
 		} catch (Exception e) {
@@ -722,29 +871,10 @@ public class JedisUtils {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * 缓存是否存在
-	 * @param key 键
-	 * @return
-	 */
-	public boolean exists(String key) {
-		boolean result = false;
-		Jedis jedis = null;
-		try {
-			jedis = getResource();
-			result = jedis.exists(key);
-			log.debug("exists {}", key);
-		} catch (Exception e) {
-			log.warn("exists {}", key, e);
-		} finally {
-			returnResource(jedis);
-		}
-		return result;
-	}
-	
-	/**
-	 * 缓存是否存在
+	 *
 	 * @param key 键
 	 * @return
 	 */
@@ -765,6 +895,7 @@ public class JedisUtils {
 
 	/**
 	 * 获取资源
+	 *
 	 * @return
 	 * @throws JedisException
 	 */
@@ -783,6 +914,7 @@ public class JedisUtils {
 
 	/**
 	 * 归还资源
+	 *
 	 * @param jedis
 	 */
 	public void returnBrokenResource(Jedis jedis) {
@@ -790,9 +922,10 @@ public class JedisUtils {
 //			jedisPool.returnBrokenResource(jedis);
 //		}
 	}
-	
+
 	/**
 	 * 释放资源
+	 *
 	 * @param jedis
 	 */
 	public void returnResource(Jedis jedis) {
@@ -803,32 +936,35 @@ public class JedisUtils {
 
 	/**
 	 * 获取byte[]类型Key
+	 *
 	 * @param object
 	 * @return
 	 */
-	public byte[] getBytesKey(Object object){
-		if(object instanceof String){
-    		return ((String)object).getBytes(Charset.defaultCharset());
-    	}else{
-    		return ObjectUtils.serialize(object);
-    	}
+	public byte[] getBytesKey(Object object) {
+		if (object instanceof String) {
+			return ((String) object).getBytes(Charset.defaultCharset());
+		} else {
+			return ObjectUtils.serialize(object);
+		}
 	}
-	
+
 	/**
 	 * Object转换byte[]类型
+	 *
 	 * @param object
 	 * @return
 	 */
-	public byte[] toBytes(Object object){
-    	return ObjectUtils.serialize(object);
+	public byte[] toBytes(Object object) {
+		return ObjectUtils.serialize(object);
 	}
 
 	/**
 	 * byte[]型转换Object
+	 *
 	 * @param bytes
 	 * @return
 	 */
-	public Object toObject(byte[] bytes){
+	public Object toObject(byte[] bytes) {
 		return ObjectUtils.unserialize(bytes);
 	}
 
