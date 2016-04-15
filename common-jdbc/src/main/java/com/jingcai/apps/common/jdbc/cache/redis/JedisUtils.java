@@ -48,6 +48,7 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			if (jedis.exists(key)) {
 				value = jedis.get(key);
 				value = StringUtils.isNotBlank(value) && !"nil".equalsIgnoreCase(value) ? value : null;
@@ -72,6 +73,7 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			if (jedis.exists(getBytesKey(key))) {
 				value = toObject(jedis.get(getBytesKey(key)));
 				log.debug("getObject {} = {}", key, value);
@@ -97,8 +99,9 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			result = jedis.set(key, value);
-			if (cacheSeconds != 0) {
+			if (cacheSeconds > 0) {
 				jedis.expire(key, cacheSeconds);
 			}
 			log.debug("set {} = {}", key, value);
@@ -123,6 +126,7 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			result = jedis.set(getBytesKey(key), toBytes(value));
 			if (cacheSeconds != 0) {
 				jedis.expire(key, cacheSeconds);
@@ -140,6 +144,7 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			jedis.hset(getBytesKey(key), toBytes(field), toBytes(value));
 			log.debug("hset key:{} field:{} = {}", key, field, value);
 		} catch (Exception e) {
@@ -154,6 +159,7 @@ public class JedisUtils implements JedisClient {
 		Jedis jedis = null;
 		try {
 			jedis = getResource();
+			key = getKey(key);
 			byte[] bytes = jedis.hget(getBytesKey(key), toBytes(field));
 			value = toObject(bytes);
 			log.debug("hget key:{} field:{} = {}", key, field, value);
@@ -906,21 +912,10 @@ public class JedisUtils implements JedisClient {
 //			log.debug("getResource.", jedis);
 		} catch (JedisException e) {
 			log.warn("getResource.", e);
-			returnBrokenResource(jedis);
+			returnResource(jedis);
 			throw e;
 		}
 		return jedis;
-	}
-
-	/**
-	 * 归还资源
-	 *
-	 * @param jedis
-	 */
-	public void returnBrokenResource(Jedis jedis) {
-//		if (jedis != null) {
-//			jedisPool.returnBrokenResource(jedis);
-//		}
 	}
 
 	/**
@@ -929,9 +924,9 @@ public class JedisUtils implements JedisClient {
 	 * @param jedis
 	 */
 	public void returnResource(Jedis jedis) {
-//		if (jedis != null) {
-//			jedisPool.returnResource(jedis);
-//		}
+		if (jedis != null) {
+			jedis.close();
+		}
 	}
 
 	/**
