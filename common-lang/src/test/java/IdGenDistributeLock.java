@@ -17,7 +17,7 @@ public class IdGenDistributeLock {
 
 	@Test
 	public void testWithThreads() throws Exception {
-		int QTY = 9;
+		int QTY = 2;
 		ExecutorService service = Executors.newFixedThreadPool(QTY);
 		for (int i = 0; i < QTY; ++i) {
 			Callable<Void> task = new Callable<Void>() {
@@ -33,8 +33,9 @@ public class IdGenDistributeLock {
 	}
 
 	public IdGenerator create() throws Exception {
-		String connectString = "192.168.0.11:2181,192.168.0.18:2181,192.168.0.19:2181";
-		String prefix = "/examples";
+//		String connectString = "192.168.0.11:2181,192.168.0.18:2181,192.168.0.19:2181";
+		String connectString = "101.200.184.166:2181,101.200.231.74:2181,101.200.157.23:2181";
+		String prefix = "/qualitydev";
 		IdGenerator idGenerator = new IdGenerator();
 		idGenerator.setConnectString(connectString);
 		idGenerator.setPrefix(prefix);
@@ -48,7 +49,8 @@ public class IdGenDistributeLock {
 		IdGenerator idGenerator = create();
 		Random random = new Random();
 		for (int i = 0; i < 1000; i++) {
-			Class cls = clsArr[random.nextInt(clsArr.length)];
+//			Class cls = clsArr[random.nextInt(clsArr.length)];
+			Class cls = LoginLogService.class;
 			log.info("{}\t\t{}", cls.getSimpleName(), idGenerator.nextId(cls));
 		}
 	}
@@ -58,3 +60,4 @@ public class IdGenDistributeLock {
 //		curatorFramework.inTransaction().check().forPath(lockPath).and().setData().forPath(lockPath, String.valueOf("abc").getBytes(Charset.forName("UTF-8"))).and().commit();
 //	}
 }
+class LoginLogService{}
