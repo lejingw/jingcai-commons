@@ -14,7 +14,7 @@ import static org.junit.Assert.assertNull;
  * Created by lejing on 16/1/14.
  */
 public class JedisCluster2UtilTest {
-	private JedisClusterUtils util = getJedisClusterUtils2();
+	private JedisClusterUtils util = getJedisClusterUtils();
 	@Test
 	public void test_string() throws InterruptedException {
 		String key1 = "key11";
@@ -104,6 +104,18 @@ public class JedisCluster2UtilTest {
 		long hlen = util.hlen(key);
 		assertEquals(0, hlen);
 
+	}
+
+
+	@Test
+	public void testIncr(){
+		String key = "key123";
+		util.set(key, "10", 10);
+		util.incr(key);
+		util.incrBy(key, 8);
+		String s = util.get(key);
+		int count = Integer.valueOf(s);
+		System.out.println(count);
 	}
 
 	private JedisClusterUtils getJedisClusterUtils() {

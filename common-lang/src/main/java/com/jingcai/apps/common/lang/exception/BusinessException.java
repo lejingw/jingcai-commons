@@ -20,4 +20,11 @@ public class BusinessException extends RuntimeException {
     public String getMessage() {
         return message;
     }
+
+    public BusinessMessage getMsg(){
+        if(null != code) {
+            return new BusinessMessage.Impl(code, message);
+        }
+        return null;
+    }
 }

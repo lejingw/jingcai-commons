@@ -266,6 +266,32 @@ public class JedisUtils implements JedisClient {
 		}
 	}
 
+
+	public void incr(String key) {
+		key = getKey(key);
+		Jedis jedis = getResource();
+		try {
+			jedis.incr(key);
+			log.debug("del key:{}", key);
+		} catch (Exception e) {
+			log.warn("del key:{} {}", key, e);
+		} finally {
+			returnResource(jedis);
+		}
+	}
+
+	public void incrBy(String key, long stepLength) {
+		key = getKey(key);
+		Jedis jedis = getResource();
+		try {
+			jedis.incrBy(key, stepLength);
+			log.debug("del key:{}", key);
+		} catch (Exception e) {
+			log.warn("del key:{} {}", key, e);
+		} finally {
+			returnResource(jedis);
+		}
+	}
 //	/**
 //	 * 获取List缓存
 //	 *

@@ -17,7 +17,7 @@ import java.util.Set;
  * Created by lejing on 16/1/14.
  */
 @Slf4j
-public class JedisClusterUtils implements JedisClient{
+public class JedisClusterUtils implements JedisClient {
 	public static final String FORMAT = "%s-%s";
 	private JedisCluster2 jc;
 	private String keyPrefix;
@@ -186,6 +186,18 @@ public class JedisClusterUtils implements JedisClient{
 			list.add(getKey(key).getBytes());
 		}
 		jc.del((byte[][]) list.toArray());
+	}
+
+	public void incr(String key) {
+		key = getKey(key);
+		log.debug("del key:{}", key);
+		jc.incr(key.getBytes());
+	}
+
+	public void incrBy(String key, long stepLength) {
+		key = getKey(key);
+		log.debug("del key:{}", key);
+		jc.incrBy(key.getBytes(), stepLength);
 	}
 
 	private byte[] getBytes(Object object) {

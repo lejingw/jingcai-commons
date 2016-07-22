@@ -1,5 +1,7 @@
 package com.jingcai.apps.common.jdbc.cache.redis;
 
+import redis.clients.jedis.Jedis;
+
 import java.util.Set;
 
 /**
@@ -30,4 +32,8 @@ public interface JedisClient {
 	void delete(String key);
 
 	void delete(String... keys);
+
+	void incr(String key);
+
+	void incrBy(String key, long stepLength);
 }
