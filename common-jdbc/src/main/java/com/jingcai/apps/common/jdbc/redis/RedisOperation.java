@@ -46,19 +46,16 @@ public interface RedisOperation {
      * exists
      */
     boolean exists(String key) throws Exception;
-    boolean existsObject(String key) throws Exception;
 
     /**
      * delete
      */
     boolean delete(String key);
-    boolean deleteObject(String key);
 
     /**
      * expire
      */
     boolean expire(String key, int seconds);
-    boolean expireObject(String key, int seconds);
 
     /**
      * hash put
@@ -76,13 +73,11 @@ public interface RedisOperation {
      * hash del
      */
     boolean hdel(String key, String field) throws Exception;
-    boolean hdelObject(String key, String field) throws Exception;
 
     /**
      * hash keys
      */
     Set<String> hKeys(String key) throws Exception;
-    Set<String> hKeysObject(String key) throws Exception;
 
     /**
      * hash values
@@ -94,13 +89,11 @@ public interface RedisOperation {
      * hash exsits
      */
     boolean hExists(String key, String field) throws Exception;
-    boolean hExistsObject(String key, String field) throws Exception;
 
     /**
      * hash length
      */
     long hLen(String key) throws Exception;
-    long hLenObject(String key) throws Exception;
 
     /**
      * hash get all
