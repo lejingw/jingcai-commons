@@ -11,13 +11,6 @@
 
     <artifactId>common-lang</artifactId>
 
-    <properties>
-        <commons-codec.version>1.8</commons-codec.version>
-        <commons-collections.version>3.2.1</commons-collections.version>
-        <jackson.version>2.3.3</jackson.version>
-        <dozer.version>5.4.0</dozer.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>ch.qos.logback</groupId>
@@ -52,20 +45,17 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>${commons-codec.version}</version>
             <optional>true</optional>
         </dependency>
         <!-- BusinessLock:LRUMap-->
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>${commons-collections.version}</version>
             <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson.version}</version>
             <optional>true</optional>
         </dependency>
         <!-- DES3 -->
@@ -79,7 +69,6 @@
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-            <version>${dozer.version}</version>
             <optional>true</optional>
             <exclusions>
                 <exclusion>

@@ -8,6 +8,7 @@ import redis.clients.jedis.params.set.SetParams;
 import java.util.Collections;
 import java.util.Set;
 
+@Deprecated
 public class JedisCluster2 extends BinaryJedisCluster /*implements JedisClusterCommands,
         MultiKeyJedisClusterCommands, JedisClusterScriptingCommands*/ {
 

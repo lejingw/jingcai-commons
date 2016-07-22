@@ -16,6 +16,7 @@ import java.util.Set;
 /**
  * Created by lejing on 16/1/14.
  */
+@Deprecated
 @Slf4j
 public class JedisClusterUtils implements JedisClient {
 	public static final String FORMAT = "%s-%s";

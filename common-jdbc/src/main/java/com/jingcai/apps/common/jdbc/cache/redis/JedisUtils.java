@@ -1,8 +1,6 @@
 package com.jingcai.apps.common.jdbc.cache.redis;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.jingcai.apps.common.lang.serialize.ObjectUtils;
 import com.jingcai.apps.common.lang.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +11,12 @@ import redis.clients.jedis.exceptions.JedisException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
  * Jedis Cache 工具类
  */
+@Deprecated
 @Slf4j
 public class JedisUtils implements JedisClient {
 	public static final String FORMAT = "%s-%s";
@@ -158,7 +156,7 @@ public class JedisUtils implements JedisClient {
 		Object value = null;
 		try {
 			byte[] bytes = jedis.hget(getBytesKey(key), getBytesKey(field));
-			if(null != bytes && bytes.length>0) {
+			if (null != bytes && bytes.length > 0) {
 				value = toObject(bytes);
 			}
 			log.debug("hget key:{} field:{} = {}", key, field, value);
@@ -184,7 +182,7 @@ public class JedisUtils implements JedisClient {
 			returnResource(jedis);
 		}
 		Set<String> strKeys = new HashSet<String>();
-		if(null != keys && keys.size()>0){
+		if (null != keys && keys.size() > 0) {
 			for (byte[] bytes : keys) {
 				strKeys.add(new String(bytes));
 			}

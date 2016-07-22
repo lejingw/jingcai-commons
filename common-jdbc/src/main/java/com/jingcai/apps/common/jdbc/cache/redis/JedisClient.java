@@ -1,12 +1,11 @@
 package com.jingcai.apps.common.jdbc.cache.redis;
 
-import redis.clients.jedis.Jedis;
-
 import java.util.Set;
 
 /**
  * Created by lejing on 16/4/14.
  */
+@Deprecated
 public interface JedisClient {
 
 	String get(String key);

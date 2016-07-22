@@ -38,6 +38,10 @@
     <properties>
         <guava.version>18.0</guava.version>
         <commons-lang3.version>3.3.2</commons-lang3.version>
+        <commons-codec.version>1.8</commons-codec.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <jackson.version>2.3.3</jackson.version>
+        <dozer.version>5.4.0</dozer.version>
         <spring.version>3.2.8.RELEASE</spring.version>
         <mybatis.version>3.2.7</mybatis.version>
         <tomcat-jdbc.version>7.0.53</tomcat-jdbc.version>
@@ -69,6 +73,26 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${dozer.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.jingcai.apps</groupId>
