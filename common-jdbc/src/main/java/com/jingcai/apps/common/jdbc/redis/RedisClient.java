@@ -115,19 +115,46 @@ public class RedisClient implements RedisOperation {
 
 	/**
 	 * get old value and set new value
-	 *
-	 * @param key
-	 * @param value
-	 * @param expiration
-	 * @return false if redis did not execute the option
-	 * @throws Exception
-	 * @author wangchongjie
 	 */
-	public Object getSet(String key, Object value, Integer expiration) throws Exception {
+	public String getSet(String key, String value, int expiration) throws Exception {
 		Jedis jedis = null;
-
 		try {
+			jedis = this.jedisPool.getResource();
+			long begin = System.currentTimeMillis();
+			// 操作expire成功返回1，失败返回0，仅当均返回1时，实际操作成功
+			String val = jedis.getSet(key, value);
 
+			boolean success = true;
+			if (expiration > 0) {
+				Long res = jedis.expire(key, expiration);
+				if (res == 0L) {
+					success = false;
+				}
+			}
+			long end = System.currentTimeMillis();
+			if (success) {
+				logger.info("getset key:" + key + ", spends: " + (end - begin) + "ms");
+			} else {
+				logger.info("getset key: " + key + " failed, key has already exists! ");
+			}
+
+			return val;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * get old value and set new value
+	 */
+	public Object getSetObject(String key, Object value, int expiration) throws Exception {
+		Jedis jedis = null;
+		try {
 			jedis = this.jedisPool.getResource();
 			long begin = System.currentTimeMillis();
 			// 操作expire成功返回1，失败返回0，仅当均返回1时，实际操作成功
@@ -167,7 +194,35 @@ public class RedisClient implements RedisOperation {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object get(String key) throws Exception {
+	public String get(String key) throws Exception {
+		String data;
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			long begin = System.currentTimeMillis();
+			data = jedis.get(key);
+			long end = System.currentTimeMillis();
+			logger.info("get key:" + key + ", spends: " + (end - begin) + "ms");
+		} catch (Exception e) {
+			// do jedis.quit() and jedis.disconnect()
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		return data;
+	}
+
+	/**
+	 * get value<br>
+	 * return null if key did not exist
+	 *
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	public Object getObject(String key) throws Exception {
 		byte[] data = null;
 		Jedis jedis = null;
 		try {
@@ -184,20 +239,41 @@ public class RedisClient implements RedisOperation {
 				jedis.close();
 			}
 		}
-
 		return this.deserialize(data);
 	}
 
 	/**
-	 * value set<br>
-	 * The string can't be longer than 1073741824 bytes (1 GB).
-	 *
-	 * @param key
-	 * @param value
-	 * @param expiration
-	 * @return false if redis did not execute the option
+	 * value set
 	 */
-	public boolean set(String key, Object value, Integer expiration) throws Exception {
+	public boolean set(String key, String value, int expiration) throws Exception {
+		String result = "";
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+
+			long begin = System.currentTimeMillis();
+			if (expiration > 0) {
+				result = jedis.setex(key, expiration, value);
+			} else {
+				result = jedis.set(key, value);
+			}
+			long end = System.currentTimeMillis();
+			logger.info("set key:" + key + ", spends: " + (end - begin) + "ms");
+			return "OK".equalsIgnoreCase(result);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	/**
+	 * value set
+	 */
+	public boolean setObject(String key, Object value, int expiration) throws Exception {
 		String result = "";
 		Jedis jedis = null;
 		try {
@@ -223,36 +299,24 @@ public class RedisClient implements RedisOperation {
 
 	}
 
-	/**
-	 * set a value without expiration
-	 *
-	 * @param key
-	 * @param value
-	 * @return false if redis did not execute the option
-	 * @throws Exception
-	 */
-	public boolean set(String key, Object value) throws Exception {
+	public boolean set(String key, String value) throws Exception {
 		return this.set(key, value, -1);
+	}
+
+	public boolean setObject(String key, Object value) throws Exception {
+		return this.setObject(key, value, -1);
 	}
 
 	/**
 	 * add if not exists
-	 *
-	 * @param key
-	 * @param value
-	 * @param expiration
-	 * @return false if redis did not execute the option
-	 * @throws Exception
 	 */
-	public boolean add(String key, Object value, Integer expiration) throws Exception {
+	public boolean add(String key, String value, int expiration) throws Exception {
 		Jedis jedis = null;
-
 		try {
-
 			jedis = this.jedisPool.getResource();
 			long begin = System.currentTimeMillis();
 			// 操作setnx与expire成功返回1，失败返回0，仅当均返回1时，实际操作成功
-			Long result = jedis.setnx(SafeEncoder.encode(key), serialize(value));
+			Long result = jedis.setnx(key, value);
 			if (expiration > 0) {
 				result = result & jedis.expire(key, expiration);
 			}
@@ -262,7 +326,6 @@ public class RedisClient implements RedisOperation {
 			} else {
 				logger.info("add key: " + key + " failed, key has already exists! ");
 			}
-
 			return result == 1L;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -274,26 +337,60 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	/**
-	 * add if not exists
-	 *
-	 * @param key
-	 * @param value
-	 * @return false if redis did not execute the option
-	 * @throws Exception
-	 */
-	public boolean add(String key, Object value) throws Exception {
+	public boolean addObject(String key, Object value, int expiration) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			long begin = System.currentTimeMillis();
+			// 操作setnx与expire成功返回1，失败返回0，仅当均返回1时，实际操作成功
+			byte[] encodeKey = SafeEncoder.encode(key);
+			Long result = jedis.setnx(encodeKey, serialize(value));
+			if (expiration > 0) {
+				result = result & jedis.expire(encodeKey, expiration);
+			}
+			long end = System.currentTimeMillis();
+			if (result == 1L) {
+				logger.info("add key:" + key + ", spends: " + (end - begin) + "ms");
+			} else {
+				logger.info("add key: " + key + " failed, key has already exists! ");
+			}
+			return result == 1L;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public boolean add(String key, String value) throws Exception {
 		return this.add(key, value, -1);
 	}
 
-	/**
-	 * Test if the specified key exists.
-	 *
-	 * @param key
-	 * @return
-	 * @throws Exception
-	 */
+	public boolean addObject(String key, Object value) throws Exception {
+		return this.addObject(key, value, -1);
+	}
+
 	public boolean exists(String key) throws Exception {
+		boolean isExist = false;
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			isExist = jedis.exists(key);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		return isExist;
+	}
+
+	public boolean existsObject(String key) throws Exception {
 		boolean isExist = false;
 		Jedis jedis = null;
 		try {
@@ -311,19 +408,12 @@ public class RedisClient implements RedisOperation {
 		return isExist;
 	}
 
-	/**
-	 * Remove the specified keys.
-	 *
-	 * @param key
-	 * @return false if redis did not execute the option
-	 */
 	public boolean delete(String key) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
-			jedis.del(SafeEncoder.encode(key));
+			jedis.del(key);
 			logger.info("delete key:" + key);
-
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -335,19 +425,46 @@ public class RedisClient implements RedisOperation {
 		return false;
 	}
 
-	/**
-	 * Remove the specified keys.
-	 *
-	 * @param key
-	 * @return false if redis did not execute the option
-	 */
+	public boolean deleteObject(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			jedis.del(SafeEncoder.encode(key));
+			logger.info("delete key:" + key);
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		return false;
+	}
+
 	public boolean expire(String key, int seconds) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			jedis.expire(key, seconds);
+			logger.info("expire key:" + key + " time after " + seconds + " seconds.");
+			return true;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		return false;
+	}
+
+	public boolean expireObject(String key, int seconds) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.expire(SafeEncoder.encode(key), seconds);
 			logger.info("expire key:" + key + " time after " + seconds + " seconds.");
-
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -399,6 +516,13 @@ public class RedisClient implements RedisOperation {
 			return new byte[0];
 		}
 		byte[] rv = null;
+		if (o instanceof String) {
+			try {
+				rv = ((String) o).getBytes("utf-8");
+			} catch (UnsupportedEncodingException e) {
+			}
+			return rv;
+		}
 		try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream os = new ObjectOutputStream(bos);
@@ -433,7 +557,23 @@ public class RedisClient implements RedisOperation {
 		return rv;
 	}
 
-	public void hput(String key, String field, Serializable fieldValue) throws Exception {
+	public void hput(String key, String field, String fieldValue) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			jedis.hset(key, field, fieldValue);
+			logger.info("hset key:" + key + " field:" + field);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public void hputObject(String key, String field, Object fieldValue) throws Exception {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
@@ -449,13 +589,29 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	public Object hget(String key, String field) {
+	public String hget(String key, String field) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			String value = jedis.hget(key, field);
+			logger.info("hget key:" + key + " field:" + field);
+			return value;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+		return null;
+	}
+
+	public Object hgetObject(String key, String field) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
 			byte[] value = jedis.hget(SafeEncoder.encode(key), SafeEncoder.encode(field));
 			logger.info("hget key:" + key + " field:" + field);
-
 			return deserialize(value);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -471,9 +627,24 @@ public class RedisClient implements RedisOperation {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
+			long value = jedis.hdel(key, field);
+			logger.info("hget key:" + key + ", field:" + field);
+			return value == 1;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+	public boolean hdelObject(String key, String field) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
 			long value = jedis.hdel(SafeEncoder.encode(key), SafeEncoder.encode(field));
 			logger.info("hget key:" + key + ", field:" + field);
-
 			return value == 1;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -489,12 +660,32 @@ public class RedisClient implements RedisOperation {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
+			Set<String> hkeys = jedis.hkeys(key);
+			logger.info("hkeys key:" + key);
+			if (isEmpty(hkeys)) {
+				return new HashSet<>(1);
+			}
+			return hkeys;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public Set<String> hKeysObject(String key) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
 			Set<byte[]> hkeys = jedis.hkeys(SafeEncoder.encode(key));
 			logger.info("hkeys key:" + key);
 			if (isEmpty(hkeys)) {
-				return new HashSet<String>(1);
+				return new HashSet<>(1);
 			} else {
-				Set<String> keys = new HashSet<String>(hkeys.size());
+				Set<String> keys = new HashSet<>(hkeys.size());
 				for (byte[] bb : hkeys) {
 					keys.add(SafeEncoder.encode(bb));
 				}
@@ -510,7 +701,27 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	public List<Object> hValues(String key) throws Exception {
+	public List<String> hValues(String key) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			List<String> hvals = jedis.hvals(key);
+			logger.info("hvals key:" + key);
+			if (isEmpty(hvals)) {
+				return new ArrayList<>(1);
+			}
+			return hvals;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public List<Object> hValuesObject(String key) throws Exception {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
@@ -539,9 +750,25 @@ public class RedisClient implements RedisOperation {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
+			boolean ret = jedis.hexists(key, field);
+			logger.info("hexists key:" + key + ", field:" + field);
+			return ret;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public boolean hExistsObject(String key, String field) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
 			boolean ret = jedis.hexists(SafeEncoder.encode(key), SafeEncoder.encode(field));
 			logger.info("hexists key:" + key + ", field:" + field);
-
 			return ret;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -557,9 +784,25 @@ public class RedisClient implements RedisOperation {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
+			long ret = jedis.hlen(key);
+			logger.info("hlen key:" + key);
+			return ret;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public long hLenObject(String key) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
 			long ret = jedis.hlen(SafeEncoder.encode(key));
 			logger.info("hlen key:" + key);
-
 			return ret;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -586,13 +829,29 @@ public class RedisClient implements RedisOperation {
 		return ret;
 	}
 
-	public Map<String, Object> hGetAll(String key) throws Exception {
+	public Map<String, String> hGetAll(String key) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			Map<String, String> hgetAll = jedis.hgetAll(key);
+			logger.info("hgetAll key:" + key);
+			return hgetAll;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public Map<String, Object> hGetAllObject(String key) throws Exception {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
 			Map<byte[], byte[]> hgetAll = jedis.hgetAll(SafeEncoder.encode(key));
 			logger.info("hgetAll key:" + key);
-
 			return decodeMap(hgetAll);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -849,7 +1108,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			// long begin = System.currentTimeMillis();
-			data = jedis.incr(SafeEncoder.encode(key));
+			data = jedis.incr(key);
 			// long end = System.currentTimeMillis();
 			// LOG.info("getValueFromCache spends: " + (end - begin) + " millionseconds.");
 		} catch (Exception e) {
@@ -860,7 +1119,6 @@ public class RedisClient implements RedisOperation {
 				jedis.close();
 			}
 		}
-
 		return data;
 	}
 

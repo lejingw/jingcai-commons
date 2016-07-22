@@ -12,7 +12,7 @@ public interface RedisCallBack<T> {
     /**
      * 具体操作实现接口
      *
-     * @param client
+     * @param clients
      * @param isRead 是否为只读，true：查询到非空结果即返回，false：双写策略
      * @param key
      *

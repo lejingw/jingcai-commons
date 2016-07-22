@@ -41,17 +41,43 @@ public class JedisTest {
 
 	@Test
 	public void test1() throws InterruptedException {
-		String key = "key1";
-		String val = "hello world!";
-		Object o = redisMgr.get(key);
+		String key = "key3";
+		String val = "111111";
+		String o = redisMgr.get(key);
 		assertThat(o).isNull();
 
-		String put = redisMgr.put(key, 100, val);
+		String put = redisMgr.put(key, 5, val);
 		System.out.println(put);
 
 		o = redisMgr.get(key);
 		assertThat(o).isEqualTo(val);
 
+		System.out.println(redisMgr.incr(key));
+		System.out.println(redisMgr.incr(key));
+
+		o = redisMgr.get(key);
+		assertThat(o).isEqualTo("111113");
+
+		//Thread.sleep(5 * 1000);
 		redisMgr.remove(key);
+	}
+
+	@Test
+	public void test_incr(){
+		String key = "test_incr";
+		if(redisMgr.existsKey(key)){
+			System.out.println("============remove========");
+			redisMgr.remove(key);
+		}
+		Object o = redisMgr.get(key);
+		assertThat(o).isNull();
+
+//		Long val = new Long(123);
+		String val = "123";
+		redisMgr.put(key, 10, val);
+
+		o = redisMgr.get(key);
+		System.out.println(redisMgr.incr(key));
+		System.out.println(redisMgr.incrBy(key, 6));
 	}
 }

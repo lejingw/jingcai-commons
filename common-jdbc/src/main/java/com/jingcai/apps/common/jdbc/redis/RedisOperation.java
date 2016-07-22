@@ -14,237 +14,122 @@ public interface RedisOperation {
 
     /**
      * get
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    Object get(String key) throws Exception;
+    String get(String key) throws Exception;
+    Object getObject(String key) throws Exception;
 
     /**
      * set with expiration
-     *
-     * @param key
-     * @param value
-     * @param expiration
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    boolean set(String key, Object value, Integer expiration) throws Exception;
+    boolean set(String key, String value, int expiration) throws Exception;
+    boolean setObject(String key, Object value, int expiration) throws Exception;
 
     /**
      * set with no expiration
-     *
-     * @param key
-     * @param value
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    boolean set(String key, Object value) throws Exception;
+    boolean set(String key, String value) throws Exception;
+    boolean setObject(String key, Object value) throws Exception;
 
     /**
-     * add with expiration by leveraging setnx
-     *
-     * @param key
-     * @param value
-     * @param expiration
-     *
-     * @return
-     *
-     * @throws Exception
+     * add with expiration
      */
-    boolean add(String key, Object value, Integer expiration) throws Exception;
+    boolean add(String key, String value, int expiration) throws Exception;
+    boolean addObject(String key, Object value, int expiration) throws Exception;
 
     /**
      * add by leveraging setnx
-     *
-     * @param key
-     * @param value
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    boolean add(String key, Object value) throws Exception;
+    boolean add(String key, String valueint) throws Exception;
+    boolean addObject(String key, Object value) throws Exception;
 
     /**
      * exists
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
     boolean exists(String key) throws Exception;
+    boolean existsObject(String key) throws Exception;
 
     /**
      * delete
-     *
-     * @param key
-     *
-     * @return
      */
     boolean delete(String key);
+    boolean deleteObject(String key);
 
     /**
      * expire
-     *
-     * @param key
-     * @param seconds
-     *
-     * @return
      */
     boolean expire(String key, int seconds);
+    boolean expireObject(String key, int seconds);
 
     /**
      * hash put
-     *
-     * @param key
-     * @param field
-     * @param fieldValue
-     *
-     * @throws Exception
      */
-    void hput(String key, String field, Serializable fieldValue) throws Exception;
+    void hput(String key, String field, String fieldValue) throws Exception;
+    void hputObject(String key, String field, Object fieldValue) throws Exception;
 
     /**
      * hash get
-     *
-     * @param key
-     * @param field
-     *
-     * @return
      */
-    Object hget(String key, String field);
+    String hget(String key, String field);
+    Object hgetObject(String key, String field);
 
     /**
      * hash del
-     *
-     * @param key
-     * @param field
-     *
-     * @return
-     *
-     * @throws Exception
      */
     boolean hdel(String key, String field) throws Exception;
+    boolean hdelObject(String key, String field) throws Exception;
 
     /**
      * hash keys
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
     Set<String> hKeys(String key) throws Exception;
+    Set<String> hKeysObject(String key) throws Exception;
 
     /**
      * hash values
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    List<Object> hValues(String key) throws Exception;
+    List<String> hValues(String key) throws Exception;
+    List<Object> hValuesObject(String key) throws Exception;
 
     /**
      * hash exsits
-     *
-     * @param key
-     * @param field
-     *
-     * @return
-     *
-     * @throws Exception
      */
     boolean hExists(String key, String field) throws Exception;
+    boolean hExistsObject(String key, String field) throws Exception;
 
     /**
      * hash length
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
     long hLen(String key) throws Exception;
+    long hLenObject(String key) throws Exception;
 
     /**
      * hash get all
-     *
-     * @param key
-     *
-     * @return
-     *
-     * @throws Exception
      */
-    Map<String, Object> hGetAll(String key) throws Exception;
+    Map<String, String> hGetAll(String key) throws Exception;
+    Map<String, Object> hGetAllObject(String key) throws Exception;
 
     /**
      * hash multiple set
-     *
-     * @param key
-     * @param values
-     *
-     * @throws Exception
      */
     void hmSet(String key, Map<String, Serializable> values) throws Exception;
 
     /**
      * hash multiple get
-     *
-     * @param key
-     * @param fields
-     *
-     * @return
-     *
-     * @throws Exception
      */
     List<Object> hmGet(String key, String... fields) throws Exception;
 
     /**
      * hash multiple get by using basic string serializer
-     *
-     * @param key
-     * @param fields
-     *
-     * @return
-     *
-     * @throws Exception
      */
     List<String> hmGetByStringSerializer(String key, String... fields) throws Exception;
 
     /**
      * hash multiple set by using basic string serializer
-     *
-     * @param key
-     * @param values
-     *
-     * @throws Exception
      */
     void hmSetByStringSerializer(String key, Map<String, String> values) throws Exception;
 
     /**
      * set add
-     *
-     * @param key
-     * @param member
-     *
-     * @return
-     *
-     * @throws Exception
      */
     boolean sAdd(String key, String member) throws Exception;
 
