@@ -4,6 +4,7 @@ import com.jingcai.apps.common.lang.string.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,18 @@ public class IdGenerator {
 		}
 		curatorFramework = CuratorFrameworkFactory.newClient(connectString, new ExponentialBackoffRetry(1000, 3));
 		curatorFramework.start();
+	}
+
+	public void destroy(){
+		if(null == curatorFramework)	return;
+		if(curatorFramework.getState() == CuratorFrameworkState.STARTED){
+			curatorFramework.close();
+		}
+		curatorFramework = null;
+	}
+
+	public void setCuratorFramework(CuratorFramework curatorFramework) {
+		this.curatorFramework = curatorFramework;
 	}
 
 	public void setStepLength(int stepLength) {

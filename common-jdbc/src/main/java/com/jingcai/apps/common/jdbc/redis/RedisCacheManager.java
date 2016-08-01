@@ -307,24 +307,6 @@ public class RedisCacheManager {
 		return cacheName;
 	}
 
-	public String removeObject(final String key) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		String cacheName = null;
-		if (isAtLeastOneAvailable(clients)) {
-			cacheName = clients.get(0).getCacheName();
-			this.execute(new BaseRedisCallBack<Boolean>() {
-				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.deleteObject(key);
-				}
-
-				public String getOptionType() {
-					return "REMOVE";
-				}
-			}, clients, key, false);
-		}
-		return cacheName;
-	}
-
 	public boolean existsKey(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
@@ -341,44 +323,12 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public boolean existsKeyObject(final String key) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Boolean>() {
-				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.existsObject(key);
-				}
-
-				public String getOptionType() {
-					return "EXIST";
-				}
-			}, clients, key, true);
-		}
-		return false;
-	}
-
 	public boolean extendTime(final String key, final int expirationMs) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			return this.execute(new BaseRedisCallBack<Boolean>() {
 				public Boolean doOperation(RedisClient client) throws Exception {
 					return client.expire(key, expirationMs / 1000);
-				}
-
-				public String getOptionType() {
-					return "EXPIRE";
-				}
-			}, clients, key, false);
-		}
-		return false;
-	}
-
-	public boolean extendTimeObject(final String key, final int expirationMs) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Boolean>() {
-				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.expireObject(key, expirationMs / 1000);
 				}
 
 				public String getOptionType() {
@@ -469,44 +419,12 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public boolean hdelObject(final String key, final String field) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Boolean>() {
-				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.hdelObject(key, field);
-				}
-
-				public String getOptionType() {
-					return "HDEL";
-				}
-			}, clients, key, false);
-		}
-		return false;
-	}
-
 	public Set<String> hKeys(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			return this.execute(new BaseRedisCallBack<Set<String>>() {
 				public Set<String> doOperation(RedisClient client) throws Exception {
 					return client.hKeys(key);
-				}
-
-				public String getOptionType() {
-					return "HKEYS";
-				}
-			}, clients, key, true);
-		}
-		return Collections.emptySet();
-	}
-
-	public Set<String> hKeysObject(final String key) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Set<String>>() {
-				public Set<String> doOperation(RedisClient client) throws Exception {
-					return client.hKeysObject(key);
 				}
 
 				public String getOptionType() {
@@ -565,44 +483,12 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public boolean hExistsObject(final String key, final String field) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Boolean>() {
-				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.hExistsObject(key, field);
-				}
-
-				public String getOptionType() {
-					return "HEXISTS";
-				}
-			}, clients, key, true);
-		}
-		return false;
-	}
-
 	public long hLen(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			return this.execute(new BaseRedisCallBack<Long>() {
 				public Long doOperation(RedisClient client) throws Exception {
 					return client.hLen(key);
-				}
-
-				public String getOptionType() {
-					return "HLEN";
-				}
-			}, clients, key, true);
-		}
-		return 0;
-	}
-
-	public long hLenObject(final String key) {
-		List<RedisClient> clients = this.getAliveClients(key);
-		if (isAtLeastOneAvailable(clients)) {
-			return this.execute(new BaseRedisCallBack<Long>() {
-				public Long doOperation(RedisClient client) throws Exception {
-					return client.hLenObject(key);
 				}
 
 				public String getOptionType() {

@@ -5,7 +5,7 @@
     <parent>
         <artifactId>common-all</artifactId>
         <groupId>com.jingcai.apps</groupId>
-        <version>1.5-RELEASE</version>
+        <version>1.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

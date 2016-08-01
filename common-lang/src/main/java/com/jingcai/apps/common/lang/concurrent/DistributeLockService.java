@@ -3,6 +3,7 @@ package com.jingcai.apps.common.lang.concurrent;
 import com.jingcai.apps.common.lang.string.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.imps.CuratorFrameworkState;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +59,14 @@ public class DistributeLockService {
 		curatorFramework.start();
 	}
 
+	public void destroy(){
+		if(null == curatorFramework)	return;
+		if(CuratorFrameworkState.STARTED == curatorFramework.getState()){
+			curatorFramework.close();
+		}
+		curatorFramework = null;
+	}
+
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
 	}
@@ -66,4 +75,7 @@ public class DistributeLockService {
 		this.connectString = connectString;
 	}
 
+	public void setCuratorFramework(CuratorFramework curatorFramework) {
+		this.curatorFramework = curatorFramework;
+	}
 }
