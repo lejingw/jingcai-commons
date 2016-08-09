@@ -130,7 +130,7 @@ public class Digests {
     public static void main(String args[]){
         String s = Encodes.encodeHex(Digests.sha1("smss050447".getBytes()));
         System.out.println(s);
-        Date date = DateUtil.parseDate10("2015-09-01");
+        Date date = DateUtil.parse10("2015-09-01");
         Date date1 = null;
         try {
             date1 = new SimpleDateFormat("yyyyMMdd").parse("20150901");

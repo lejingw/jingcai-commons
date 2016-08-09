@@ -64,7 +64,7 @@ public class RedisClient implements RedisOperation {
 		this.timeout = clientConfig.getTimeout();
 		this.redisAuthKey = clientConfig.getRedisAuthKey();
 		if (StringUtils.isEmpty(redisAuthKey)) {
-			logger.info("use no auth mode for " + redisServerHost);
+			logger.debug("use no auth mode for " + redisServerHost);
 			jedisPool = new JedisPool(getPoolConfig(), redisServerHost, redisServerPort, timeout);
 		} else {
 			jedisPool = new JedisPool(getPoolConfig(), redisServerHost, redisServerPort, timeout, redisAuthKey);
@@ -73,7 +73,7 @@ public class RedisClient implements RedisOperation {
 	}
 
 	protected void onAfterInit(String host, int port) {
-		logger.info("New Jedis pool <client: " + cacheName + "> <server: " + this.getLiteralRedisServer() +
+		logger.debug("New Jedis pool <client: " + cacheName + "> <server: " + this.getLiteralRedisServer() +
 				"> object created. Connection pool will be initiated when calling.");
 	}
 
@@ -133,9 +133,9 @@ public class RedisClient implements RedisOperation {
 			}
 			long end = System.currentTimeMillis();
 			if (success) {
-				logger.info("getset key:" + key + ", spends: " + (end - begin) + "ms");
+				logger.debug("getset key:" + key + ", spends: " + (end - begin) + "ms");
 			} else {
-				logger.info("getset key: " + key + " failed, key has already exists! ");
+				logger.debug("getset key: " + key + " failed, key has already exists! ");
 			}
 
 			return val;
@@ -170,9 +170,9 @@ public class RedisClient implements RedisOperation {
 			}
 			long end = System.currentTimeMillis();
 			if (success) {
-				logger.info("getset key:" + key + ", spends: " + (end - begin) + "ms");
+				logger.debug("getset key:" + key + ", spends: " + (end - begin) + "ms");
 			} else {
-				logger.info("getset key: " + key + " failed, key has already exists! ");
+				logger.debug("getset key: " + key + " failed, key has already exists! ");
 			}
 
 			return result;
@@ -202,7 +202,7 @@ public class RedisClient implements RedisOperation {
 			long begin = System.currentTimeMillis();
 			data = jedis.get(key);
 			long end = System.currentTimeMillis();
-			logger.info("get key:" + key + ", spends: " + (end - begin) + "ms");
+			logger.debug("get key:" + key + ", spends: " + (end - begin) + "ms");
 		} catch (Exception e) {
 			// do jedis.quit() and jedis.disconnect()
 			throw e;
@@ -230,7 +230,7 @@ public class RedisClient implements RedisOperation {
 			long begin = System.currentTimeMillis();
 			data = jedis.get(SafeEncoder.encode(key));
 			long end = System.currentTimeMillis();
-			logger.info("get key:" + key + ", spends: " + (end - begin) + "ms");
+			logger.debug("get key:" + key + ", spends: " + (end - begin) + "ms");
 		} catch (Exception e) {
 			// do jedis.quit() and jedis.disconnect()
 			throw e;
@@ -258,7 +258,7 @@ public class RedisClient implements RedisOperation {
 				result = jedis.set(key, value);
 			}
 			long end = System.currentTimeMillis();
-			logger.info("set key:" + key + ", spends: " + (end - begin) + "ms");
+			logger.debug("set key:" + key + ", spends: " + (end - begin) + "ms");
 			return "OK".equalsIgnoreCase(result);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -286,7 +286,7 @@ public class RedisClient implements RedisOperation {
 				result = jedis.set(SafeEncoder.encode(key), serialize(value));
 			}
 			long end = System.currentTimeMillis();
-			logger.info("set key:" + key + ", spends: " + (end - begin) + "ms");
+			logger.debug("set key:" + key + ", spends: " + (end - begin) + "ms");
 			return "OK".equalsIgnoreCase(result);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -322,9 +322,9 @@ public class RedisClient implements RedisOperation {
 			}
 			long end = System.currentTimeMillis();
 			if (result == 1L) {
-				logger.info("add key:" + key + ", spends: " + (end - begin) + "ms");
+				logger.debug("add key:" + key + ", spends: " + (end - begin) + "ms");
 			} else {
-				logger.info("add key: " + key + " failed, key has already exists! ");
+				logger.debug("add key: " + key + " failed, key has already exists! ");
 			}
 			return result == 1L;
 		} catch (Exception e) {
@@ -350,9 +350,9 @@ public class RedisClient implements RedisOperation {
 			}
 			long end = System.currentTimeMillis();
 			if (result == 1L) {
-				logger.info("add key:" + key + ", spends: " + (end - begin) + "ms");
+				logger.debug("add key:" + key + ", spends: " + (end - begin) + "ms");
 			} else {
-				logger.info("add key: " + key + " failed, key has already exists! ");
+				logger.debug("add key: " + key + " failed, key has already exists! ");
 			}
 			return result == 1L;
 		} catch (Exception e) {
@@ -395,7 +395,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.del(key);
-			logger.info("delete key:" + key);
+			logger.debug("delete key:" + key);
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -412,7 +412,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.expire(key, seconds);
-			logger.info("expire key:" + key + " time after " + seconds + " seconds.");
+			logger.debug("expire key:" + key + " time after " + seconds + " seconds.");
 			return true;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -435,7 +435,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			result = jedis.flushAll();
-			logger.info("redis client name: " + this.getCacheName() + " flushall.");
+			logger.debug("redis client name: " + this.getCacheName() + " flushall.");
 
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -510,7 +510,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.hset(key, field, fieldValue);
-			logger.info("hset key:" + key + " field:" + field);
+			logger.debug("hset key:" + key + " field:" + field);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw e;
@@ -526,7 +526,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.hset(SafeEncoder.encode(key), SafeEncoder.encode(field), serialize(fieldValue));
-			logger.info("hset key:" + key + " field:" + field);
+			logger.debug("hset key:" + key + " field:" + field);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw e;
@@ -542,7 +542,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			String value = jedis.hget(key, field);
-			logger.info("hget key:" + key + " field:" + field);
+			logger.debug("hget key:" + key + " field:" + field);
 			return value;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -559,7 +559,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			byte[] value = jedis.hget(SafeEncoder.encode(key), SafeEncoder.encode(field));
-			logger.info("hget key:" + key + " field:" + field);
+			logger.debug("hget key:" + key + " field:" + field);
 			return deserialize(value);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -576,7 +576,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			long value = jedis.hdel(key, field);
-			logger.info("hget key:" + key + ", field:" + field);
+			logger.debug("hget key:" + key + ", field:" + field);
 			return value == 1;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -593,7 +593,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			Set<String> hkeys = jedis.hkeys(key);
-			logger.info("hkeys key:" + key);
+			logger.debug("hkeys key:" + key);
 			if (isEmpty(hkeys)) {
 				return new HashSet<>(1);
 			}
@@ -613,7 +613,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			List<String> hvals = jedis.hvals(key);
-			logger.info("hvals key:" + key);
+			logger.debug("hvals key:" + key);
 			if (isEmpty(hvals)) {
 				return new ArrayList<>(1);
 			}
@@ -633,7 +633,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			List<byte[]> hvals = jedis.hvals(SafeEncoder.encode(key));
-			logger.info("hvals key:" + key);
+			logger.debug("hvals key:" + key);
 			if (isEmpty(hvals)) {
 				return new ArrayList<Object>(1);
 			} else {
@@ -658,7 +658,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			boolean ret = jedis.hexists(key, field);
-			logger.info("hexists key:" + key + ", field:" + field);
+			logger.debug("hexists key:" + key + ", field:" + field);
 			return ret;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -675,7 +675,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			long ret = jedis.hlen(key);
-			logger.info("hlen key:" + key);
+			logger.debug("hlen key:" + key);
 			return ret;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -707,7 +707,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			Map<String, String> hgetAll = jedis.hgetAll(key);
-			logger.info("hgetAll key:" + key);
+			logger.debug("hgetAll key:" + key);
 			return hgetAll;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -724,7 +724,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			Map<byte[], byte[]> hgetAll = jedis.hgetAll(SafeEncoder.encode(key));
-			logger.info("hgetAll key:" + key);
+			logger.debug("hgetAll key:" + key);
 			return decodeMap(hgetAll);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
@@ -756,7 +756,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			jedis.hmset(SafeEncoder.encode(key), encodeMap(values));
-			logger.info("hmSet key:" + key + ", field:" + values.keySet());
+			logger.debug("hmSet key:" + key + ", field:" + values.keySet());
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw e;
@@ -784,7 +784,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			List<byte[]> hmget = jedis.hmget(SafeEncoder.encode(key), encodeArray(fields));
-			logger.info("hmGet key:" + key + ", fields:" + Arrays.toString(fields));
+			logger.debug("hmGet key:" + key + ", fields:" + Arrays.toString(fields));
 			if (isEmpty(hmget)) {
 				return new ArrayList<Object>(1);
 			} else {
@@ -809,7 +809,7 @@ public class RedisClient implements RedisOperation {
 		try {
 			jedis = this.jedisPool.getResource();
 			List<String> hmget = jedis.hmget(key, fields);
-			logger.info("hmGet key:" + key + ", fields:" + Arrays.toString(fields));
+			logger.debug("hmGet key:" + key + ", fields:" + Arrays.toString(fields));
 			if (isEmpty(hmget)) {
 				return new ArrayList<String>(1);
 			} else {
@@ -844,7 +844,7 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	public boolean sAdd(String key, String member) throws Exception {
+	public boolean sAdd(String key, String member) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
@@ -860,7 +860,7 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	public boolean sRem(String key, String member) throws Exception {
+	public boolean sRem(String key, String member) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();
@@ -876,7 +876,7 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
-	public Set<String> sMembers(String key) throws Exception {
+	public Set<String> sMembers(String key) {
 		Jedis jedis = null;
 		try {
 			jedis = this.jedisPool.getResource();

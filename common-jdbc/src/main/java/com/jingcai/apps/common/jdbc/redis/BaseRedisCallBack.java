@@ -53,13 +53,13 @@ public abstract class BaseRedisCallBack<T> implements RedisCallBack<T> {
             try {
                 result = doOperation(client);
                 long end = System.currentTimeMillis();
-                logger.info("[RedisCache:" + getOptionType() + "]" + " <key:" + key + "> <client: " +
+                logger.debug("[RedisCache:" + getOptionType() + "]" + " <key:" + key + "> <client: " +
                         client.getCacheName() + "> <server: " + client.getLiteralRedisServer() +
                         "> success ! (use " + (end - start) + " ms)");
                 if (isRead) { // read=true，读取出非空即返回，否则双写
                     if (result == null) {
                         // retry another client
-                        logger.info("[RedisCache:" + getOptionType() + "]" + " <key:" + key + "> <client: " +
+                        logger.debug("[RedisCache:" + getOptionType() + "]" + " <key:" + key + "> <client: " +
                                 client.getCacheName() + "> <server: " + client.getLiteralRedisServer() +
                                 "> but null result... (use " + (end - start) + " ms)");
                         continue;
