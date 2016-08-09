@@ -596,7 +596,7 @@ public class RedisCacheManager {
 		}
 	}
 
-	public boolean sAdd(final String key, final String member) throws Exception {
+	public boolean sAdd(final String key, final String member) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			this.execute(new BaseRedisCallBack<Object>() {
@@ -612,7 +612,7 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public boolean sRem(final String key, final String member) throws Exception {
+	public boolean sRem(final String key, final String member) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			this.execute(new BaseRedisCallBack<Object>() {
@@ -629,7 +629,7 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public Set<String> sMembers(final String key) throws Exception {
+	public Set<String> sMembers(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			return this.execute(new BaseRedisCallBack<Set<String>>() {
