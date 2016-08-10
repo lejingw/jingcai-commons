@@ -645,6 +645,118 @@ public class RedisCacheManager {
 		return Collections.emptySet();
 	}
 
+	public void zadd(String key, double score, String member) {
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			this.execute(new BaseRedisCallBack<Object>() {
+				public Object doOperation(RedisClient client) throws Exception {
+					client.zadd(key, score, member);
+					return null;
+				}
+
+				public String getOptionType() {
+					return "zadd";
+				}
+			}, clients, key, false);
+		}
+	}
+
+	public void zrem(String key, String member) {
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			this.execute(new BaseRedisCallBack<Object>() {
+				public Object doOperation(RedisClient client) throws Exception {
+					client.zrem(key, member);
+					return null;
+				}
+
+				public String getOptionType() {
+					return "zrem";
+				}
+			}, clients, key, false);
+		}
+	}
+
+	public long zcount(String key, String min, String max){
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Long>() {
+				public Long doOperation(RedisClient client) throws Exception {
+					return client.zcount(key, min, max);
+				}
+
+				public String getOptionType() {
+					return "zcount";
+				}
+			}, clients, key, false);
+		}
+		return 0;
+	}
+
+	public Set<String> zrange(String key, long start, long end){
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Set<String>>() {
+				public Set<String> doOperation(RedisClient client) throws Exception {
+					return client.zrange(key, start, end);
+				}
+
+				public String getOptionType() {
+					return "zcount";
+				}
+			}, clients, key, false);
+		}
+		return Collections.emptySet();
+	}
+
+	public Set<String> zrevrange(String key, long start, long end){
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Set<String>>() {
+				public Set<String> doOperation(RedisClient client) throws Exception {
+					return client.zrevrange(key, start, end);
+				}
+
+				public String getOptionType() {
+					return "zcount";
+				}
+			}, clients, key, false);
+		}
+		return Collections.emptySet();
+	}
+
+	public Set<String> zrangeByScore(String key, String min, String max, int offset, int count){
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Set<String>>() {
+				public Set<String> doOperation(RedisClient client) throws Exception {
+					return client.zrangeByScore(key, min, max, offset, count);
+				}
+
+				public String getOptionType() {
+					return "zrangeByScore";
+				}
+			}, clients, key, false);
+		}
+		return Collections.emptySet();
+	}
+
+	public Set<String> zrevrangeByScore(String key, String max, String min, int offset, int count){
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Set<String>>() {
+				public Set<String> doOperation(RedisClient client) throws Exception {
+					return client.zrevrangeByScore(key, max, min, offset, count);
+				}
+
+				public String getOptionType() {
+					return "zrevrangeByScore";
+				}
+			}, clients, key, false);
+		}
+		return Collections.emptySet();
+	}
+
 	public void lpush(final String key, final Object value) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {

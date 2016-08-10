@@ -893,6 +893,115 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
+	public boolean zadd(String key, double score, String member) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			Long r = jedis.zadd(key, score, member);
+			return r == 1;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public boolean zrem(String key, String member) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			Long r = jedis.zrem(key, member);
+			return r == 1;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public long zcount(String key, String min, String max) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.zcount(key, min, max);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public Set<String> zrange(String key, long start, long end) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.zrange(key, start, end);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public static final String MIN_STR = "-inf";
+	public static final String MAX_STR = "+inf";
+	public Set<String> zrevrange(String key, long start, long end) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.zrevrange(key, start, end);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public Set<String> zrangeByScore(String key, String min, String max, int offset, int count) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.zrangeByScore(key, min, max, offset, count);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
+	public Set<String> zrevrangeByScore(String key, String max, String min, int offset, int count) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.zrevrangeByScore(key, max, min, offset, count);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 	public boolean lpush(String key, Object value) throws Exception {
 		Jedis jedis = null;
 		try {
