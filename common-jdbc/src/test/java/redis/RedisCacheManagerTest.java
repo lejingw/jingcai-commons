@@ -43,8 +43,25 @@ public class RedisCacheManagerTest {
 	}
 
 	@Test
-	public void test1(){
-		String key = "site";
+	public void setTest() {
+		String key = "setTest";
+		if (redisMgr.existsKey(key)) {
+			redisMgr.remove(key);
+		}
+
+		redisMgr.sAdd(key, "a");
+		redisMgr.sAdd(key, "b");
+		redisMgr.sAdd(key, "c");
+		redisMgr.sAdd(key, "d");
+
+		for (int i = 0; i < 5; i++) {
+			System.out.println(redisMgr.sPop(key));
+		}
+	}
+
+	@Test
+	public void sortSetTest(){
+		String key = "sortSetTest";
 		if(redisMgr.existsKey(key)){
 			redisMgr.remove(key);
 		}

@@ -876,6 +876,21 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
+	public String sPop(String key) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.spop(key);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 	public Set<String> sMembers(String key) {
 		Jedis jedis = null;
 		try {

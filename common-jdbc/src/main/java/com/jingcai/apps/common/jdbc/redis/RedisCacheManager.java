@@ -629,6 +629,22 @@ public class RedisCacheManager {
 		return false;
 	}
 
+	public String sPop(final String key) {
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<String>() {
+				public String doOperation(RedisClient client) throws Exception {
+					return client.sPop(key);
+				}
+
+				public String getOptionType() {
+					return "HMSET-STRING_SERIAL";
+				}
+			}, clients, key, false);
+		}
+		return null;
+	}
+
 	public Set<String> sMembers(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
