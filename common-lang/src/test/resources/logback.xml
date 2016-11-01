@@ -12,7 +12,7 @@
     <logger name="org.mybatis" level="warn"/>
     <logger name="com.github.springtestdbunit" level="warn"/>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="stdout" />
     </root>
 </configuration>
