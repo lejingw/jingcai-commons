@@ -75,6 +75,11 @@ public interface RedisOperation {
     boolean hdel(String key, String field) throws Exception;
 
     /**
+     * keys
+     */
+    Set<String> keys(String pattern) throws Exception;
+
+    /**
      * hash keys
      */
     Set<String> hKeys(String key) throws Exception;

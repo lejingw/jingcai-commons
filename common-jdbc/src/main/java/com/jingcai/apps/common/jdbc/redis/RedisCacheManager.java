@@ -419,6 +419,22 @@ public class RedisCacheManager {
 		return false;
 	}
 
+
+	public Set<String> keys(final String pattern) {
+		List<RedisClient> clients = this.getAliveClients(pattern);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Set<String>>() {
+				public Set<String> doOperation(RedisClient client) throws Exception {
+					return client.keys(pattern);
+				}
+
+				public String getOptionType() {
+					return "HKEYS";
+				}
+			}, clients, pattern, true);
+		}
+		return Collections.emptySet();
+	}
 	public Set<String> hKeys(final String key) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {

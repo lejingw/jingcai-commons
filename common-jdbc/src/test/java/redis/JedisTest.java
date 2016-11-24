@@ -80,4 +80,14 @@ public class JedisTest {
 		System.out.println(redisMgr.incr(key));
 		System.out.println(redisMgr.incrBy(key, 6));
 	}
+
+	@Test
+	public void test_keys(){
+		redisMgr.put("id_1", "111");
+		redisMgr.put("id_2", "22");
+		redisMgr.put("id_3", "3");
+		redisMgr.keys("id_*").stream().forEach(key->{
+			System.out.println(redisMgr.get(key));
+		});
+	}
 }

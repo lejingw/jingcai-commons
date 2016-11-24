@@ -13,10 +13,20 @@ import java.util.Date;
  */
 @Slf4j
 public class DateUtil {
+	public static final String PATTERN_4 = "yyyy";
+	public static final String PATTERN_6 = "yyyyMM";
 	public static final String PATTERN_8 = "yyyyMMdd";
 	public static final String PATTERN_10 = "yyyy-MM-dd";
 	public static final String PATTERN_14 = "yyyyMMddHHmmss";
 	public static final String PATTERN_20 = "yyyy-MM-dd HH:mm:ss";
+
+	public static String getNow4() {
+		return format4(new Date());
+	}
+
+	public static String getNow6() {
+		return format6(new Date());
+	}
 
 	public static String getNow8() {
 		return format8(new Date());
@@ -36,6 +46,16 @@ public class DateUtil {
 
 	public static String parse20ToDate14(String date20str) {
 		return format20(parse20(date20str));
+	}
+
+	public static Date parse4(String date4Str) {
+		if (null == date4Str) return null;
+		return parse(date4Str, PATTERN_4);
+	}
+
+	public static Date parse6(String date6Str) {
+		if (null == date6Str) return null;
+		return parse(date6Str, PATTERN_6);
 	}
 
 	public static Date parse8(String date8Str) {
@@ -66,6 +86,14 @@ public class DateUtil {
 		} catch (ParseException e) {
 			return null;
 		}
+	}
+
+	public static String format4(Date date) {
+		return format(date, PATTERN_4);
+	}
+
+	public static String format6(Date date) {
+		return format(date, PATTERN_6);
 	}
 
 	public static String format8(Date date) {
@@ -128,14 +156,24 @@ public class DateUtil {
 	}
 
 	/**
+	 * 获取统计月第一天
+	 */
+	public static Date firstDayOfMonth(Date statdate) {
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(statdate);
+		ca.set(Calendar.DAY_OF_MONTH, 1);
+		return ca.getTime();
+	}
+
+	/**
 	 * 获取统计月最后一天
-	 * @param statdate
-	 * @return
 	 */
 	public static Date lastDayOfMonth(Date statdate) {
 		Calendar ca = Calendar.getInstance();
 		ca.setTime(statdate);
 		ca.set(Calendar.DAY_OF_MONTH, ca.getActualMaximum(Calendar.DAY_OF_MONTH));
+//		ca.set(Calendar.DAY_OF_MONTH, 1);
+//		ca.roll(Calendar.DAY_OF_MONTH, -1);
 		return ca.getTime();
 	}
 }

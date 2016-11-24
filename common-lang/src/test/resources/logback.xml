@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>%d{yyyy/MM/dd-HH:mm:ss.SSS} %-5level [%thread] %class:%line>>%msg%n</pattern>
-        </encoder >
+    <property name="log.directory" value="${AppHome:-.}/logs"/>
+    <property name="log.app" value="${AppId:-taskdeal}"/>
+    <property name="log.charset" value="UTF-8"/>
+    <property name="log.maxHistory" value="30"/>
+    <property name="log.async.queue.size" value="1024"/>
+    <property name="log.level.error" value="error"/>
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{45}:%line> %msg%n"/>
+
+    <appender name="normal_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}/${log.app}-log%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
     </appender>
 
+    <!-- Asynchronized log, for FILE only -->
+    <appender name="async_file" class="ch.qos.logback.classic.AsyncAppender">
+        <!-- Don't discard log, logback will discard TRACE, DEBUG, INFO log when queue 80% capacity reached by default. -->
+        <discardingThreshold>0</discardingThreshold>
+        <queueSize>${log.async.queue.size}</queueSize>
+        <appender-ref ref="normal_file"/>
+    </appender>
 
-    <logger name="org.springframework" level="warn"/>
-    <logger name="org.apache.ibatis" level="warn"/>
-    <logger name="org.mybatis" level="warn"/>
-    <logger name="com.github.springtestdbunit" level="warn"/>
+    <appender name="error_file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>${log.level.error}</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}/${log.app}-error%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.maxHistory}</maxHistory>
+        </rollingPolicy>
+        <encoder charset="${log.charset}">
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
 
-    <root level="info">
-        <appender-ref ref="stdout" />
+    <!--
+    <appender name="mqLogFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.directory}/${log.app}-mq%d{yyyy-MM}.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+    <logger name="com.jingcai.apps.zbus" level="info" additivity="true">
+        <appender-ref ref="mqLogFile"/>
+    </logger>
+    -->
+
+    <logger name="org.springframework" level="info"/>
+    <logger name="org.apache.ibatis" level="info"/>
+    <logger name="org.mybatis.spring" level="info"/>
+    <logger name="org.apache.curator" level="info"/>
+    <logger name="org.apache.zookeeper" level="info"/>
+    <logger name="com.jingcai.apps.common.jdbc.redis.RedisClient" level="info"/>
+    <logger name="com.jingcai.apps.common.jdbc.redis.RedisCacheManager" level="info"/>
+
+    <root level="error">
+        <appender-ref ref="async_file"/>
+        <appender-ref ref="error_file"/>
     </root>
 </configuration>

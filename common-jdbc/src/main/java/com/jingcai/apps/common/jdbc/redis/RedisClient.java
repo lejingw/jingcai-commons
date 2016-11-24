@@ -588,6 +588,26 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
+	public Set<String> keys(String pattern) throws Exception {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			Set<String> keys = jedis.keys(pattern);
+			logger.debug("keys pattern:" + pattern);
+			if (isEmpty(keys)) {
+				return new HashSet<>(1);
+			}
+			return keys;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 	public Set<String> hKeys(String key) throws Exception {
 		Jedis jedis = null;
 		try {
