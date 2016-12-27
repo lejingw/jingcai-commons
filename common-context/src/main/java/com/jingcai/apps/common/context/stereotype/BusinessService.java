@@ -11,7 +11,7 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Transactional(readOnly = true)
+//@Transactional(readOnly = true)
 @org.springframework.stereotype.Component
 public @interface BusinessService {
     /**
