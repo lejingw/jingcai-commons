@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by lejing on 16/1/5.
  */
 public class IdGenEntry {
+	private final Charset utf8 = Charset.forName("UTF-8");
 	private final CuratorFramework curatorFramework;
 	private final String lockPath;
 	private final int stepLength;
@@ -53,10 +54,14 @@ public class IdGenEntry {
 
 				if (current.get() >= end) {
 					byte[] bytes = curatorFramework.getData().forPath(lockPath);
-					current.set((null == bytes || bytes.length < 1) ? 0 : bytes2Int(bytes));
-					int endtemp;
-					curatorFramework.setData().forPath(lockPath, int2Bytes(endtemp = current.get() + stepLength));
+//					current.set((null == bytes || bytes.length < 1) ? 0 : bytes2Int(bytes));
+//					int endtemp;
+//					curatorFramework.setData().forPath(lockPath, int2Bytes(endtemp = current.get() + stepLength));
+//					end = endtemp;
 
+					current.set((null == bytes || bytes.length < 1) ? 0 : Integer.parseInt(new String(bytes, utf8)));
+					int endtemp = current.get() + stepLength;
+					curatorFramework.setData().forPath(lockPath, String.valueOf(endtemp).getBytes(utf8));
 					end = endtemp;
 				}
 			} finally {

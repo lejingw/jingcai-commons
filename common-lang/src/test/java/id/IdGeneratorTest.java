@@ -60,8 +60,8 @@ public class IdGeneratorTest {
 	private static IdGenerator create() throws Exception {
 //		String connectString = "192.168.0.11:2181,192.168.0.18:2181,192.168.0.19:2181";
 //		String connectString = "101.200.184.166:2181,101.200.231.74:2181,101.200.157.23:2181";
-//		String connectString = "djip:2181";
-		String connectString = "localhost:2181";
+		String connectString = "djip:2181";
+//		String connectString = "localhost:2181";
 		String prefix = "/caiwa";
 		IdGenerator idGenerator = new IdGenerator();
 		idGenerator.setConnectString(connectString);

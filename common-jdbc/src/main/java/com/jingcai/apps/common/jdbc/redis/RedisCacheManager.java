@@ -323,12 +323,12 @@ public class RedisCacheManager {
 		return false;
 	}
 
-	public boolean extendTime(final String key, final int expirationMs) {
+	public boolean extendTime(final String key, final int seconds) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {
 			return this.execute(new BaseRedisCallBack<Boolean>() {
 				public Boolean doOperation(RedisClient client) throws Exception {
-					return client.expire(key, expirationMs / 1000);
+					return client.expire(key, seconds);
 				}
 
 				public String getOptionType() {
