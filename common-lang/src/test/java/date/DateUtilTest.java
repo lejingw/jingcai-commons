@@ -31,4 +31,12 @@ public class DateUtilTest {
 //		ca.set(Calendar.DAY_OF_WEEK, ca.getActualMinimum(Calendar.DAY_OF_WEEK));
 		System.out.println(ca.getTime());
 	}
+
+	@Test
+	public void testCleanTime() {
+		Date date = new Date();
+		Date date2 = DateUtil.cleanTime(date);
+		System.out.println(date + "---" + date.getTime());
+		System.out.println(date2 + "---" + date2.getTime());
+	}
 }

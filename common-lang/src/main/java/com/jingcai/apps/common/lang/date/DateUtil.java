@@ -32,6 +32,25 @@ public class DateUtil {
 		return format8(new Date());
 	}
 
+	public static Date getToday(){
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.HOUR_OF_DAY, 0);//设置当前时刻的时钟为0
+		c.set(Calendar.MINUTE, 0);//设置当前时刻的分钟为0
+		c.set(Calendar.SECOND, 0);//设置当前时刻的秒钟为0
+		c.set(Calendar.MILLISECOND, 0);//设置当前的毫秒钟为0
+		return c.getTime();
+	}
+
+	public static Date cleanTime(Date date){
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.HOUR_OF_DAY, 0);//设置当前时刻的时钟为0
+		c.set(Calendar.MINUTE, 0);//设置当前时刻的分钟为0
+		c.set(Calendar.SECOND, 0);//设置当前时刻的秒钟为0
+		c.set(Calendar.MILLISECOND, 0);//设置当前的毫秒钟为0
+		return c.getTime();
+	}
+
 	public static String getNow10() {
 		return format10(new Date());
 	}
