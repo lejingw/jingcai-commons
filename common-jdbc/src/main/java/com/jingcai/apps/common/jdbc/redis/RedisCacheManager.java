@@ -677,6 +677,22 @@ public class RedisCacheManager {
 		return Collections.emptySet();
 	}
 
+	public boolean sIsMember(final String key, final String member) {
+		List<RedisClient> clients = this.getAliveClients(key);
+		if (isAtLeastOneAvailable(clients)) {
+			return this.execute(new BaseRedisCallBack<Boolean>() {
+				public Boolean doOperation(RedisClient client) throws Exception {
+					return client.sIsMember(key, member);
+				}
+
+				public String getOptionType() {
+					return "SISMEMBER";
+				}
+			}, clients, key, true);
+		}
+		return false;
+	}
+
 	public void zadd(String key, double score, String member) {
 		List<RedisClient> clients = this.getAliveClients(key);
 		if (isAtLeastOneAvailable(clients)) {

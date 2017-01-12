@@ -176,4 +176,18 @@ public class DateUtil {
 //		ca.roll(Calendar.DAY_OF_MONTH, -1);
 		return ca.getTime();
 	}
+
+	public static Date firstDayOfWeek(Date statdate) {
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(statdate);
+		ca.set(Calendar.DAY_OF_WEEK, 1);
+		return ca.getTime();
+	}
+
+	public static Date lastDayOfWeek(Date statdate) {
+		Calendar ca = Calendar.getInstance();
+		ca.setTime(statdate);
+		ca.set(Calendar.DAY_OF_WEEK, ca.getActualMaximum(Calendar.DAY_OF_WEEK));
+		return ca.getTime();
+	}
 }

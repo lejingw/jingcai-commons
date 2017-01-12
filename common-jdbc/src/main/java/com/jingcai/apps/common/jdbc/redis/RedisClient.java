@@ -928,6 +928,21 @@ public class RedisClient implements RedisOperation {
 		}
 	}
 
+	public boolean sIsMember(String key, String member) {
+		Jedis jedis = null;
+		try {
+			jedis = this.jedisPool.getResource();
+			return jedis.sismember(key, member);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+			if (jedis != null) {
+				jedis.close();
+			}
+		}
+	}
+
 	public boolean zadd(String key, double score, String member) {
 		Jedis jedis = null;
 		try {
